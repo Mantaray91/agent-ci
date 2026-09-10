@@ -26,7 +26,7 @@ jobs:
 
       - name: Syntax compilation check
         run: |
-          python -m py_compile scripts/*.py
+          python -m py_compile scripts/*.py hooks/*.py
 
       - name: CLI --help execution check for all 7 scripts
         run: |
@@ -38,9 +38,9 @@ jobs:
           python scripts/verify_improvements.py --help
           python scripts/generate_report.py --help
 
-      - name: JSON validation for evals/evals.json
+      - name: JSON validation for evals/evals.json and hooks/hooks.json
         run: |
-          python -c "import json; json.load(open('evals/evals.json'))"
+          python -c "import json; json.load(open('evals/evals.json')); json.load(open('hooks/hooks.json'))"
 
       - name: SVG validation for assets/*.svg
         run: |

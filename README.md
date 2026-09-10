@@ -82,6 +82,25 @@ If you already cloned this repository locally, symlink it to your active agent s
 ln -s "$(pwd)" ~/.agents/skills/agent-ci
 ```
 
+### 🪝 Telemetry Hook Setup (Automated Session Logging)
+AGENT-CI analyzes session transcripts produced during real agent usage. To automatically log every completed session into `~/.agents/logs/*.jsonl`, register the included [`hooks/session-logger.py`](hooks/session-logger.py) in your agent configuration (`~/.agents/hooks.json` or `.gemini/hooks.json`):
+
+```json
+{
+  "session-logger": {
+    "Stop": [
+      {
+        "type": "command",
+        "command": "python3 ~/.agents/skills/agent-ci/hooks/session-logger.py",
+        "timeout": 30
+      }
+    ]
+  }
+}
+```
+
+Whenever an agent session completes (Stop event), the hook parses the transcript, extracts tool calls and termination metrics, and appends a structured JSONL entry ready for AGENT-CI audits.
+
 > [!NOTE]
 > **Zero External Dependencies**: AGENT-CI runs purely on the standard library of Python 3.10+. No `pip install` or external packages are required.
 
@@ -215,6 +234,9 @@ AGENT-CI/
 │   └── pipeline-diagram.svg      # 7-phase architecture diagram
 ├── evals/                        # Skill evaluation suite & sample baselines
 │   └── evals.json                # Benchmark prompts and evaluation assertions
+├── hooks/                        # Agent telemetry hook integration
+│   ├── hooks.json                # Hook configuration template (Stop event)
+│   └── session-logger.py         # Automated session transcript parser
 ├── scripts/                      # Core 7-phase pipeline engines
 │   ├── discover_skills.py        # Phase 0: Auto-discovery engine
 │   ├── parse_logs.py             # Phase 1: High-density log parser

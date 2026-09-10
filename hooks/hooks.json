@@ -1,0 +1,11 @@
+{
+  "session-logger": {
+    "Stop": [
+      {
+        "type": "command",
+        "command": "python3 ~/.agents/skills/agent-ci/hooks/session-logger.py",
+        "timeout": 30
+      }
+    ]
+  }
+}
