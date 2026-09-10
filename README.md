@@ -82,6 +82,17 @@ If you already cloned this repository locally, symlink it to your active agent s
 ln -s "$(pwd)" ~/.agents/skills/agent-ci
 ```
 
+### 🤖 Method 4: Agent-Assisted Installation (One-Prompt Setup)
+If you are already paired with an AI coding agent (e.g. Antigravity, Claude Code, Gemini CLI, Cursor), you can delegate the entire installation by pasting this instruction into your chat:
+
+> *"Please install and configure AGENT-CI from `https://github.com/Mantaray91/agent-ci`:*
+> *1. Detect my operating system and global agent skills directory (`~/.agents/skills/` or `$HOME/.agents/skills/`).*
+> *2. Clone the repository into `.../skills/agent-ci` (or symlink if local).*
+> *3. Register the Stop hook `session-logger.py` into my active `hooks.json`.*
+> *4. Run `python3 scripts/discover_skills.py --help` (or `python` on Windows) to verify the installation."*
+
+---
+
 ### 🪝 Telemetry Hook Setup (Automated Session Logging)
 AGENT-CI analyzes session transcripts produced during real agent usage. To automatically log every completed session into `~/.agents/logs/*.jsonl`, register the included [`hooks/session-logger.py`](hooks/session-logger.py) in your agent configuration (`~/.agents/hooks.json` or `.gemini/hooks.json`):
 
@@ -101,8 +112,46 @@ AGENT-CI analyzes session transcripts produced during real agent usage. To autom
 
 Whenever an agent session completes (Stop event), the hook parses the transcript, extracts tool calls and termination metrics, and appends a structured JSONL entry ready for AGENT-CI audits.
 
+---
+
+<details>
+<summary><b>🪟 Windows Setup & PowerShell Workarounds</b></summary>
+
+#### 1. Recommended Shells
+- **Git Bash** (included with [Git for Windows](https://git-scm.com/download/win)): Uses standard POSIX syntax (`python`, `ln -s`, `diff`), running scripts identically to Linux/macOS.
+- **WSL2 (Windows Subsystem for Linux)**: Native Ubuntu/Debian environment with zero modification needed.
+
+#### 2. Native Windows PowerShell / CMD
+If running directly under Windows PowerShell:
+- **Skills Directory**: `$HOME\.agents\skills\agent-ci` (resolves to `C:\Users\<Username>\.agents\skills\agent-ci`).
+- **Clone via PowerShell**:
+  ```powershell
+  git clone https://github.com/Mantaray91/agent-ci.git "$HOME\.agents\skills\agent-ci"
+  ```
+- **Symlink via PowerShell**:
+  ```powershell
+  New-Item -ItemType SymbolicLink -Path "$HOME\.agents\skills\agent-ci" -Target (Get-Location)
+  ```
+  *(Requires Windows Developer Mode enabled or an elevated Administrator prompt).*
+- **Python Binary Name**: Windows typically uses `python` rather than `python3`. Adjust commands accordingly (`python scripts\discover_skills.py ...`).
+- **Diff Utility**: Phase 3 uses `diff -u`. Ensure `diff.exe` from Git for Windows (`C:\Program Files\Git\usr\bin`) is added to your system `PATH`.
+</details>
+
+<details>
+<summary><b>🛠️ Optional Tooling Installation (Node.js, Git, Obsidian)</b></summary>
+
+While AGENT-CI requires **zero third-party Python packages** (100% Python 3.10+ standard library), the following external utilities enhance functionality:
+
+| Utility | Role | Windows (`winget`) | macOS (`brew`) | Linux (`apt`) |
+| :--- | :--- | :--- | :--- | :--- |
+| **Git** *(Required)* | Remote audits, automated commits & auto-revert | `winget install Git.Git` | `brew install git` | `sudo apt install git` |
+| **Node.js / NPX** | One-line `npx skills add` installer | `winget install OpenJS.NodeJS` | `brew install node` | `sudo apt install nodejs npm` |
+| **Obsidian** | Visual dashboard viewing (`OBSIDIAN_DASHBOARD.md`) | `winget install Obsidian.Obsidian` | `brew install --cask obsidian` | `flatpak install md.obsidian.Obsidian` |
+
+</details>
+
 > [!NOTE]
-> **Zero External Dependencies**: AGENT-CI runs purely on the standard library of Python 3.10+. No `pip install` or external packages are required.
+> **Zero External Python Dependencies**: AGENT-CI runs purely on the standard library of Python 3.10+. No `pip install` or external packages are required.
 
 ---
 
