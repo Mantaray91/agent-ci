@@ -8,6 +8,8 @@ If a score regression exceeding the allowable threshold (> 5%) is detected, auto
 executes `git revert --no-edit HEAD` and tags the commit with `ci/reverted-<timestamp>`.
 """
 
+from __future__ import annotations
+
 import os
 import sys
 import re

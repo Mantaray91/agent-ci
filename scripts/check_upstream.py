@@ -9,6 +9,8 @@ to identify available updates, supports symlink-installed skills with repository
 and optionally fetches sparse diffs for updated skills.
 """
 
+from __future__ import annotations
+
 import os
 import sys
 import json

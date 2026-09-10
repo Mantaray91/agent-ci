@@ -45,3 +45,7 @@ jobs:
       - name: SVG validation for assets/*.svg
         run: |
           python -c "import xml.etree.ElementTree as ET, glob; [ET.parse(f) for f in glob.glob('assets/*.svg')]"
+
+      - name: Run automated security & unit test suite
+        run: |
+          python -m unittest discover -s tests -p "test_*.py" -v

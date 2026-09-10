@@ -17,6 +17,8 @@ Rule Lifecycle Management:
 Creates git commit with tag `ci/YYYY-MM-DD`. Supports `--dry-run` flag.
 """
 
+from __future__ import annotations
+
 import os
 import sys
 import re
@@ -24,6 +26,7 @@ import json
 import argparse
 import subprocess
 import hashlib
+from typing import Any
 from pathlib import Path
 from datetime import datetime, timezone
 
