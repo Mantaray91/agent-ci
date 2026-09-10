@@ -142,15 +142,22 @@ flowchart TD
 Agent CI v2.1 introduces a closed-loop rule efficacy lifecycle to prevent instruction bloat and ensure only high-value rules persist:
 
 ```mermaid
-stateDiagram-v2
-    [*] --> Active: Applied by CI\n(Unique Rule ID + Baseline)
-    Active --> Active: Efficacy Evaluation (7 days)\nError reduction monitored
-    Active --> Effective: Efficacy >= 30%\nKept active & reinforced
-    Active --> Pruned: Efficacy < 20% after 7 days\nAuto-pruned from target file
-    Pruned --> Evolved: Error persists in telemetry?\nSynthesize alternative rule
-    Evolved --> Active: Injected with evolved rule ID
-    Effective --> [*]
-    Pruned --> [*]: Error resolved without rule
+flowchart TD
+    Start([Failure Detected in Telemetry]) --> Active["1. Active Rule<br/>Unique ID + Baseline Error Count"]
+    Active --> Window["7-Day Evaluation Window<br/>Monitor Error Frequency Delta"]
+    
+    Window --> DeltaCheck{"Error Reduction<br/>Threshold?"}
+    
+    DeltaCheck -->|Reduction &gt;= 30%| Effective["2. Effective Rule<br/>Reinforced & Maintained"]
+    DeltaCheck -->|Reduction &lt; 20%| Pruned["3. Pruned Rule<br/>Auto-Excised from Config"]
+    
+    Pruned --> PersistCheck{"Error Persists<br/>in Logs?"}
+    
+    PersistCheck -->|Yes| Evolved["4. Evolved Rule<br/>Synthesize Stricter Constraints"]
+    PersistCheck -->|No| Resolved([Issue Resolved Without Rule])
+    
+    Evolved --> Active
+    Effective --> Permanent([High-Value Active Guardrail])
 ```
 
 ### Learning Rate Metric ($R$)

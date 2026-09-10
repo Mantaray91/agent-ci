@@ -59,125 +59,76 @@ Rather than relying on manual prompt tweaking or ad-hoc system prompt changes, *
 
 ---
 
+## 📦 Installation
+
+### Method 1: Instant Install via NPX (Recommended)
+Add `agent-ci` directly to your agent's active skills using the skills package runner:
+
+```bash
+npx skills add https://github.com/Mantaray91/agent-ci
+```
+
+### Method 2: Git Clone (Global Agent Skill)
+Clone directly into your global agent skills directory (Antigravity, Claude Code, Gemini CLI, or standard agent harness):
+
+```bash
+git clone https://github.com/Mantaray91/agent-ci.git ~/.agents/skills/agent-ci
+```
+
+### Method 3: Symlink (Local Development)
+If you already cloned this repository locally, symlink it to your active agent skills folder:
+
+```bash
+ln -s "$(pwd)" ~/.agents/skills/agent-ci
+```
+
+> [!NOTE]
+> **Zero External Dependencies**: AGENT-CI runs purely on the standard library of Python 3.10+. No `pip install` or external packages are required.
+
+---
+
 ## 🚀 Quickstart
 
-### Option A: Complete 1-Run Live Production Cycle
+### A. Agent Execution (Interactive & Autonomous)
 
-Execute the complete 7-phase pipeline sequentially:
+Once installed as an agent skill, your AI coding agent will auto-discover `agent-ci`. You can invoke it using natural language prompts in your agent chat:
 
-```bash
-# Phase 0: Auto-discover workspaces & skills across session logs
-python3 scripts/discover_skills.py \
-  --output ~/.agents/project-skill-map.json
-
-# Phase 1: Parse and batch logs with failure signature extraction
-python3 scripts/parse_logs.py \
-  --batch-size 10 \
-  --skip-audited \
-  --mark-audited \
-  --archive-dir ~/.agents/logs/archived \
-  --output /tmp/agent_ci_telem.json
-
-# Phase 2: Compute composite scores, rule efficacy & score deltas
-python3 scripts/score_engine.py \
-  --telemetry /tmp/agent_ci_telem.json \
-  --registry ~/.agents/project-skill-map.json \
-  --history ~/.agents/score_history.json \
-  --rule-ledger ~/.agents/rule_ledger.json
-
-# Phase 3: Check upstream currency for Git, NPX, and symlinked skills
-python3 scripts/check_upstream.py \
-  --lock-file ~/.agents/.skill-lock.json \
-  --registry ~/.agents/project-skill-map.json \
-  --output /tmp/agent_ci_upstream.json
-
-# Phase 4: Apply updates, synthesize rules, prune stale guards, tag commit
-python3 scripts/apply_improvements.py \
-  --telemetry /tmp/agent_ci_telem.json \
-  --registry ~/.agents/project-skill-map.json \
-  --scores ~/.agents/score_history.json \
-  --upstream /tmp/agent_ci_upstream.json \
-  --rule-ledger ~/.agents/rule_ledger.json \
-  --output-json /tmp/agent_ci_changes.json
-
-# Phase 5: Execute evaluation suites with automated regression rollback
-python3 scripts/verify_improvements.py \
-  --changes /tmp/agent_ci_changes.json \
-  --history ~/.agents/score_history.json \
-  --rule-ledger ~/.agents/rule_ledger.json \
-  --output-json /tmp/agent_ci_verify.json
-
-# Phase 6: Compile executive audit report & mirror to Obsidian
-python3 scripts/generate_report.py \
-  --telemetry /tmp/agent_ci_telem.json \
-  --scores ~/.agents/score_history.json \
-  --upstream /tmp/agent_ci_upstream.json \
-  --changes /tmp/agent_ci_changes.json \
-  --verification /tmp/agent_ci_verify.json \
-  --rule-ledger ~/.agents/rule_ledger.json \
-  --mirror-obsidian
+```text
+"Run agent-ci to audit session logs and synthesize improvements."
 ```
+
+Common trigger prompts:
+- *"Audit agent logs for recurring loops and tool friction"*
+- *"Check upstream skill updates and compute composite health score"*
+- *"Run agent-ci in dry-run mode to preview proposed rule changes"*
+
+The agent inspects [`SKILL.md`](SKILL.md), orchestrates the 7 pipeline phases, and reports executive health findings directly in your chat session.
 
 ---
 
-### Option B: Safe Dry-Run Simulation
+### B. Manual CLI Execution (Terminal Mode)
 
-Preview all detections, score computations, proposed rule injections, and evaluation checks without writing files, committing to Git, or rolling back state:
+You can run the end-to-end 7-phase pipeline directly from your terminal:
 
 ```bash
-# Auto-discover into temporary test registry
-python3 scripts/discover_skills.py --output /tmp/dryrun_registry.json
-
-# Parse logs without marking them audited
-python3 scripts/parse_logs.py --batch-size 5 --skip-audited --output /tmp/dryrun_telem.json
-
-# Compute scores and preview learning rate
-python3 scripts/score_engine.py \
-  --telemetry /tmp/dryrun_telem.json \
-  --registry /tmp/dryrun_registry.json \
-  --history ~/.agents/score_history.json \
-  --rule-ledger ~/.agents/rule_ledger.json
-
-# Check upstream status
-python3 scripts/check_upstream.py \
-  --lock-file ~/.agents/.skill-lock.json \
-  --registry /tmp/dryrun_registry.json \
-  --output /tmp/dryrun_upstream.json
-
-# Preview rule synthesis and pruning in dry-run mode
-python3 scripts/apply_improvements.py \
-  --dry-run \
-  --telemetry /tmp/dryrun_telem.json \
-  --registry /tmp/dryrun_registry.json \
-  --scores ~/.agents/score_history.json \
-  --upstream /tmp/dryrun_upstream.json \
-  --rule-ledger ~/.agents/rule_ledger.json \
-  --output-json /tmp/dryrun_changes.json
-
-# Simulate test verification without triggering git revert
-python3 scripts/verify_improvements.py \
-  --dry-run \
-  --changes /tmp/dryrun_changes.json \
-  --history ~/.agents/score_history.json \
-  --rule-ledger ~/.agents/rule_ledger.json \
-  --output-json /tmp/dryrun_verify.json
-
-# Generate report and preview dashboard
-python3 scripts/generate_report.py \
-  --telemetry /tmp/dryrun_telem.json \
-  --scores ~/.agents/score_history.json \
-  --upstream /tmp/dryrun_upstream.json \
-  --changes /tmp/dryrun_changes.json \
-  --verification /tmp/dryrun_verify.json \
-  --rule-ledger ~/.agents/rule_ledger.json \
-  --mirror-obsidian
+# Run all 7 phases sequentially in production
+python3 scripts/discover_skills.py --output ~/.agents/project-skill-map.json && \
+python3 scripts/parse_logs.py --batch-size 10 --skip-audited --mark-audited --archive-dir ~/.agents/logs/archived --output /tmp/agent_ci_telem.json && \
+python3 scripts/score_engine.py --telemetry /tmp/agent_ci_telem.json --registry ~/.agents/project-skill-map.json --history ~/.agents/score_history.json --rule-ledger ~/.agents/rule_ledger.json && \
+python3 scripts/check_upstream.py --lock-file ~/.agents/.skill-lock.json --registry ~/.agents/project-skill-map.json --output /tmp/agent_ci_upstream.json && \
+python3 scripts/apply_improvements.py --telemetry /tmp/agent_ci_telem.json --registry ~/.agents/project-skill-map.json --scores ~/.agents/score_history.json --upstream /tmp/agent_ci_upstream.json --rule-ledger ~/.agents/rule_ledger.json --output-json /tmp/agent_ci_changes.json && \
+python3 scripts/verify_improvements.py --changes /tmp/agent_ci_changes.json --history ~/.agents/score_history.json --rule-ledger ~/.agents/rule_ledger.json --output-json /tmp/agent_ci_verify.json && \
+python3 scripts/generate_report.py --telemetry /tmp/agent_ci_telem.json --scores ~/.agents/score_history.json --upstream /tmp/agent_ci_upstream.json --changes /tmp/agent_ci_changes.json --verification /tmp/agent_ci_verify.json --rule-ledger ~/.agents/rule_ledger.json --mirror-obsidian
 ```
+
+> [!TIP]
+> **Safe Dry-Run Simulation**: To preview all detections, score computations, proposed rules, and test checks without altering files, committing to Git, or marking logs as audited, simply add `--dry-run` to `apply_improvements.py` and `verify_improvements.py`, and omit `--mark-audited` from `parse_logs.py`.
 
 ---
 
-### Option C: Automated Scheduling via `/schedule`
+### C. Scheduled Autonomous Run (Background Daemon)
 
-Configure your agent harness to run AGENT-CI automatically on a daily schedule (e.g., every morning at 06:00 AM) using a fast, cost-effective model:
+Configure your agent harness to run AGENT-CI automatically on a daily schedule (e.g., every morning at 06:00 AM) using a fast, cost-effective model (`gemini-2.5-flash`):
 
 ```bash
 /schedule CronExpression="0 6 * * *" Prompt="Execute agent-ci v2.1 autonomous pipeline: run discover_skills to update registry, parse_logs with adaptive batching, compute score_engine composite scores with rule ledger, check_upstream skill currency, apply_improvements for updates and rule lifecycle (apply, prune, evolve), verify_improvements with auto-revert, and generate_report with Obsidian mirroring. Alert user only if regressions or critical errors occur." IsDaemon=true
@@ -226,15 +177,22 @@ $$\text{Score} = 0.30H + 0.25(1 - L) + 0.15(1 - C) + 0.10F + 0.20R$$
 To prevent prompt pollution and ensure agents remain nimble, every synthesized rule follows a strict lifecycle:
 
 ```mermaid
-stateDiagram-v2
-    [*] --> Active: Synthesized with Rule ID & Baseline
-    Active --> Active: 7-Day Measurement Window
-    Active --> Effective: Error Reduction >= 30%
-    Active --> Pruned: Error Reduction < 20% after 7 days
-    Pruned --> Evolved: Error persists in telemetry
-    Evolved --> Active: Injected with refined constraints
-    Effective --> [*]: Permanently reinforced
-    Pruned --> [*]: Error resolved without rule
+flowchart TD
+    Start([Failure Detected in Telemetry]) --> Active["1. Active Rule<br/>Unique ID + Baseline Error Count"]
+    Active --> Window["7-Day Evaluation Window<br/>Monitor Error Frequency Delta"]
+    
+    Window --> DeltaCheck{"Error Reduction<br/>Threshold?"}
+    
+    DeltaCheck -->|Reduction &gt;= 30%| Effective["2. Effective Rule<br/>Reinforced & Maintained"]
+    DeltaCheck -->|Reduction &lt; 20%| Pruned["3. Pruned Rule<br/>Auto-Excised from Config"]
+    
+    Pruned --> PersistCheck{"Error Persists<br/>in Logs?"}
+    
+    PersistCheck -->|Yes| Evolved["4. Evolved Rule<br/>Synthesize Stricter Constraints"]
+    PersistCheck -->|No| Resolved([Issue Resolved Without Rule])
+    
+    Evolved --> Active
+    Effective --> Permanent([High-Value Active Guardrail])
 ```
 
 - **Active**: Rule is recorded in `rule_ledger.json` with baseline error counts and injected into system instructions (`GEMINI.md` or `SKILL.md`).
