@@ -75,6 +75,17 @@ def _format_symlink_source(remote_url: str | None, repo_name: str) -> str:
     return f"symlink:{repo_name}"
 
 
+def is_valid_git_url(url: str | None) -> bool:
+    """Validate that a git URL is safe against option injection and uses an allowed protocol."""
+    if not url or not isinstance(url, str):
+        return False
+    u = url.strip()
+    if u.startswith("-"):
+        return False
+    valid_prefixes = ("https://", "http://", "git://", "ssh://", "git@")
+    return any(u.startswith(p) for p in valid_prefixes)
+
+
 def fetch_skill_diff(name: str, skill_info: dict, local_path: Path) -> str:
     """Fetch git diff between local skill folder and upstream repository.
 
@@ -94,6 +105,9 @@ def fetch_skill_diff(name: str, skill_info: dict, local_path: Path) -> str:
     if not source_url or source_url == "local":
         return f"Cannot fetch diff: Invalid or local source URL for skill '{name}'."
 
+    if not is_valid_git_url(source_url):
+        return f"Cannot fetch diff: Untrusted git source URL '{source_url}' for skill '{name}'."
+
     skill_path_raw = skill_info.get("skillPath", f"skills/{name}/SKILL.md")
     skill_p = Path(skill_path_raw)
     if skill_p.suffix == ".md":
@@ -105,11 +119,11 @@ def fetch_skill_diff(name: str, skill_info: dict, local_path: Path) -> str:
 
     try:
         with tempfile.TemporaryDirectory() as tmpdir:
-            # 1. Shallow clone with sparse checkout enabled
+            # 1. Shallow clone with sparse checkout enabled (using '--' to prevent option injection)
             clone_cmd = [
                 "git", "clone", "--depth", "1",
                 "--filter=blob:none", "--sparse",
-                source_url, tmpdir
+                "--", source_url, tmpdir
             ]
             clone_res = subprocess.run(
                 clone_cmd,
@@ -205,6 +219,17 @@ def check_single_skill(
             "source": source,
         }
 
+    if not is_valid_git_url(source_url):
+        return {
+            "name": name,
+            "status": "CHECK_FAILED",
+            "local_hash": local_hash,
+            "remote_hash": None,
+            "source_url": source_url,
+            "source": source,
+            "error": f"Untrusted or invalid git source URL: {source_url}",
+        }
+
     # Query remote HEAD commit
     remote_hash = None
     error_msg = None
@@ -213,7 +238,7 @@ def check_single_skill(
         remote_hash, error_msg = url_cache[source_url]
     else:
         try:
-            cmd = ["git", "ls-remote", source_url, "HEAD"]
+            cmd = ["git", "ls-remote", "--", source_url, "HEAD"]
             proc = subprocess.run(
                 cmd,
                 capture_output=True,
@@ -458,6 +483,19 @@ def check_symlink_skill(
 
     source_str = _format_symlink_source(remote_url, repo_root.name)
 
+    # Validate remote URL safety
+    if not is_valid_git_url(remote_url):
+        return {
+            "name": name,
+            "status": "CHECK_FAILED",
+            "local_hash": local_hash,
+            "remote_hash": None,
+            "source_url": remote_url,
+            "source": source_str,
+            "install_type": "symlink",
+            "error": f"Untrusted or invalid git remote URL: {remote_url}",
+        }
+
     # Step 5 & 8: Get remote HEAD commit (with cache by remote_url)
     remote_hash = None
     error_msg = None
@@ -466,7 +504,7 @@ def check_symlink_skill(
         remote_hash, error_msg = repo_cache[remote_url]
     else:
         try:
-            cmd = ["git", "ls-remote", remote_url, "HEAD"]
+            cmd = ["git", "ls-remote", "--", remote_url, "HEAD"]
             proc = subprocess.run(
                 cmd,
                 capture_output=True,

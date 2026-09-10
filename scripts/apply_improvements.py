@@ -38,6 +38,20 @@ def _normalize_path(p: str) -> str:
         return str(p).strip()
 
 
+def _sanitize_token(val: Any, max_len: int = 50, default: str = "item") -> str:
+    """Sanitize identifier tokens (tool name, error type, scope) to prevent prompt injection."""
+    if val is None:
+        return default
+    s = str(val).strip()
+    # Strip any newlines, carriage returns, markdown formatting, HTML/XML tags
+    s = re.sub(r'[\r\n`*#<>]', '', s)
+    # Whitelist only safe alphanumeric, hyphen, underscore, colon, dot
+    s = re.sub(r'[^a-zA-Z0-9_\-\.:]', '_', s).strip('._-')
+    if not s:
+        return default
+    return s[:max_len]
+
+
 def route_to_target(finding_or_scope: str | None, registry: dict) -> list[str]:
     """Route a scope or finding/error pattern to target skill or rule file paths.
 
@@ -119,7 +133,7 @@ def generate_audit_patch(finding: dict) -> tuple[str, str]:
         or finding.get("pattern") == "loop"
     )
     if is_loop:
-        tool = finding.get("tool", "tool")
+        tool = _sanitize_token(finding.get("tool"), max_len=40, default="tool")
         section = "LOOP_GUARDS"
         content = (
             f"- **ANTI-LOOP GUARD ({tool})**: Do not call `{tool}` repeatedly on the same target "
@@ -151,7 +165,7 @@ def generate_audit_patch(finding: dict) -> tuple[str, str]:
         or "api" in finding_type.lower()
     )
     if is_api:
-        api_name = finding_type or "API"
+        api_name = _sanitize_token(finding_type, max_len=40, default="API")
         section = "ERROR_HANDLING"
         content = (
             f"- **API TRANSACTION & ERROR HANDLING ({api_name})**: Encapsulate all {api_name} calls "
@@ -178,7 +192,7 @@ def generate_audit_patch(finding: dict) -> tuple[str, str]:
         or level in ("A", "B")
     )
     if is_traceback_or_exit:
-        err_type = finding_type or "CommandExecution"
+        err_type = _sanitize_token(finding_type, max_len=40, default="CommandExecution")
         section = "PRE_FLIGHT_CHECKS"
         content = (
             f"- **PRE-FLIGHT VERIFICATION & RETURN CODE CHECK ({err_type})**: Validate environment "
@@ -189,7 +203,7 @@ def generate_audit_patch(finding: dict) -> tuple[str, str]:
 
     # 5. Score delta hardening
     if finding_type == "score_delta" or "delta" in finding:
-        scope = finding.get("scope", "global")
+        scope = _sanitize_token(finding.get("scope"), max_len=40, default="global")
         delta = float(finding.get("delta", 0.0))
         score = float(finding.get("score", 0.0))
         section = "SCORE_HARDENING"
@@ -202,7 +216,7 @@ def generate_audit_patch(finding: dict) -> tuple[str, str]:
 
     # Fallback audit safeguard
     section = "HARD_GATES"
-    fallback_name = finding_type or "GeneralAudit"
+    fallback_name = _sanitize_token(finding_type, max_len=40, default="GeneralAudit")
     content = (
         f"- **AUDIT SAFEGUARD ({fallback_name})**: Enforce verification before assertion and "
         f"validate all preconditions prior to execution."
@@ -214,7 +228,8 @@ def apply_patch_to_file(
     target_path: str,
     patch_content: str,
     section: str,
-    dry_run: bool = False
+    dry_run: bool = False,
+    allowed_roots: list[Path] | None = None,
 ) -> bool:
     """Apply a patch rule to a target file within a designated section idempotently.
 
@@ -223,11 +238,20 @@ def apply_patch_to_file(
         patch_content: Markdown rule content to add.
         section: Section name to insert into (e.g. 'LOOP_GUARDS', 'HARD_GATES').
         dry_run: If True, do not modify file on disk.
+        allowed_roots: Optional list of allowed root directories to prevent path traversal.
 
     Returns:
         True if the patch was applied (or would be applied in dry-run), False if skipped.
     """
-    path_obj = Path(os.path.expanduser(target_path))
+    path_obj = Path(os.path.expanduser(target_path)).resolve()
+
+    # Path traversal guard: ensure target is within allowed roots
+    if allowed_roots:
+        resolved_roots = [Path(os.path.expanduser(str(r))).resolve() for r in allowed_roots]
+        if not any(path_obj == r or path_obj.is_relative_to(r) for r in resolved_roots):
+            print(f"Security Alert: Target path '{path_obj}' is outside allowed directories; skipping patch.", file=sys.stderr)
+            return False
+
     if not path_obj.exists() or not path_obj.is_file():
         print(f"Warning: Target file '{path_obj}' does not exist; skipping patch.", file=sys.stderr)
         return False
@@ -383,15 +407,17 @@ def git_commit_and_tag(
     repo_dir: str,
     message: str,
     tag: str,
-    dry_run: bool = False
+    dry_run: bool = False,
+    files_to_stage: list[str] | None = None,
 ) -> dict:
-    """Check git status, commit changes, and apply version tag.
+    """Check git status, commit changes, and apply version tag safely without staging untracked secrets.
 
     Args:
         repo_dir: Path to the git repository.
         message: Git commit message.
         tag: Git tag string (e.g. 'ci/YYYY-MM-DD').
         dry_run: If True, do not create git commit or tag.
+        files_to_stage: Optional list of explicit files to stage (avoids git add -A leak).
 
     Returns:
         Dictionary with status, commit_hash, tag, and dirty flag.
@@ -432,7 +458,23 @@ def git_commit_and_tag(
                 "dirty": False,
             }
 
-        add_cmd = ["git", "-C", str(repo_path), "add", "-A"]
+        # Safe staging: stage explicitly modified files or tracked modifications only (never untracked secrets)
+        if files_to_stage:
+            rel_files = []
+            for f in files_to_stage:
+                fp = Path(os.path.expanduser(str(f))).resolve()
+                try:
+                    rel = fp.relative_to(repo_path.resolve())
+                    rel_files.append(str(rel))
+                except ValueError:
+                    pass
+            if rel_files:
+                add_cmd = ["git", "-C", str(repo_path), "add", "--"] + rel_files
+            else:
+                add_cmd = ["git", "-C", str(repo_path), "add", "-u"]
+        else:
+            add_cmd = ["git", "-C", str(repo_path), "add", "-u"]
+
         add_res = subprocess.run(add_cmd, capture_output=True, text=True, check=False)
         if add_res.returncode != 0:
             return {
@@ -1045,7 +1087,8 @@ def evolve_rule(
     old_id = old_rule.get("id", "rule")
 
     if target_lower.startswith("loop:") or old_rule.get("section") == "LOOP_GUARDS":
-        tool = target_error.split(":", 1)[1].strip() if ":" in target_error else (old_rule.get("tool") or "tool")
+        raw_tool = target_error.split(":", 1)[1].strip() if ":" in target_error else (old_rule.get("tool") or "tool")
+        tool = _sanitize_token(raw_tool, max_len=40, default="tool")
         section = "LOOP_GUARDS"
         new_rule_text = (
             f"- **ANTI-LOOP GUARD V2 ({tool})**: Avoid repeated invocations on targets exceeding 500 lines "
@@ -1053,7 +1096,8 @@ def evolve_rule(
             f"halt immediately, investigate root cause, and ask user after 2 consecutive identical attempts."
         )
     elif "correction" in target_lower or old_rule.get("section") == "SCOPE_ALIGNMENT":
-        scope = old_rule.get("scope") or "global"
+        raw_scope = old_rule.get("scope") or "global"
+        scope = _sanitize_token(raw_scope, max_len=40, default="global")
         section = "SCOPE_ALIGNMENT"
         new_rule_text = (
             f"- **SCOPE ALIGNMENT & DOMAIN PRE-VERIFICATION ({scope})**: For domain operations (e.g. {scope}/domain/API modifications), "
@@ -1061,7 +1105,8 @@ def evolve_rule(
             f"halt and clarify scope with user when requirements are ambiguous or upon receiving feedback."
         )
     elif target_lower.startswith("error:") or old_rule.get("section") in ("PRE_FLIGHT_CHECKS", "ERROR_HANDLING"):
-        err_name = target_error.split(":", 1)[1].strip() if ":" in target_error else target_error
+        raw_err = target_error.split(":", 1)[1].strip() if ":" in target_error else target_error
+        err_name = _sanitize_token(raw_err, max_len=40, default="CommandExecution")
         section = "PRE_FLIGHT_CHECKS"
         new_rule_text = (
             f"- **PRE-FLIGHT RESOURCE & ERROR VERIFICATION ({err_name})**: Verify file exists, path permissions "
@@ -1069,10 +1114,11 @@ def evolve_rule(
             f"to prevent `{err_name}`; halt immediately on failure."
         )
     else:
+        clean_err = _sanitize_token(target_error, max_len=40, default="GeneralError")
         section = old_rule.get("section") or "HARD_GATES"
         new_rule_text = (
-            f"- **EVOLVED AUDIT SAFEGUARD ({target_error})**: Enforce strict verification of preconditions "
-            f"and context constraints prior to execution to resolve recurring {target_error}."
+            f"- **EVOLVED AUDIT SAFEGUARD ({clean_err})**: Enforce strict verification of preconditions "
+            f"and context constraints prior to execution to resolve recurring {clean_err}."
         )
 
     title_match = re.search(r"\*\*([^*]+)\*\*", new_rule_text)
@@ -1163,6 +1209,16 @@ def apply_improvements(
 
     # Initialize in-memory ledger tracker
     ledger_data = {"rules": [], "pruned": [], "evolved": []}
+    files_to_stage: set[str] = set()
+    if ledger_p.exists():
+        files_to_stage.add(str(ledger_p))
+
+    allowed_roots: list[Path] = [
+        Path.home() / ".agents",
+        Path.home() / ".gemini",
+        Path(os.path.expanduser(repo_dir)).resolve(),
+    ]
+
     if ledger_p.exists() and ledger_p.is_file():
         try:
             with open(ledger_p, "r", encoding="utf-8") as f:
@@ -1179,6 +1235,12 @@ def apply_improvements(
         try:
             with open(reg_path, "r", encoding="utf-8") as f:
                 registry = json.load(f)
+                for m in registry.get("mappings", []):
+                    for sp in m.get("skill_paths", []):
+                        try:
+                            allowed_roots.append(Path(os.path.expanduser(sp)).resolve().parent)
+                        except Exception:
+                            pass
         except Exception as e:
             print(f"Warning: Failed to load registry '{reg_path}': {e}", file=sys.stderr)
 
@@ -1276,9 +1338,11 @@ def apply_improvements(
                     if len(active_for_target) >= 5:
                         evicted_rule = min(active_for_target, key=lambda r: int(r.get("baseline_count", 0)))
 
-                    applied = apply_patch_to_file(target, patch_content, section_name, dry_run=dry_run)
+                    applied = apply_patch_to_file(target, patch_content, section_name, dry_run=dry_run, allowed_roots=allowed_roots)
                     if applied:
                         applied_rules_in_run.add((target, rule_id))
+                        files_to_stage.add(str(target))
+                        files_to_stage.add(str(ledger_p))
 
                         # Evict lowest-baseline rule on this target file
                         if evicted_rule:
@@ -1387,9 +1451,11 @@ def apply_improvements(
                             for target in targets:
                                 if (target, rule_id) in applied_rules_in_run:
                                     continue
-                                applied = apply_patch_to_file(target, patch_content, section_name, dry_run=dry_run)
+                                applied = apply_patch_to_file(target, patch_content, section_name, dry_run=dry_run, allowed_roots=allowed_roots)
                                 if applied:
                                     applied_rules_in_run.add((target, rule_id))
+                                    files_to_stage.add(str(target))
+                                    files_to_stage.add(str(ledger_p))
                                     changes_applied.append({
                                         "target": target,
                                         "type": "score_hardening",
@@ -1436,8 +1502,10 @@ def apply_improvements(
             curr_cnt = count_error_in_telemetry(telemetry_data, pruned.get("target_error_type", ""))
             # Check budget cap before applying evolved rule
             if check_budget_cap(ledger_data, evolved_target, max_rules=5, new_rule_baseline=curr_cnt):
-                applied_evolved = apply_patch_to_file(evolved_target, evolved_patch, evolved_sec, dry_run=dry_run)
+                applied_evolved = apply_patch_to_file(evolved_target, evolved_patch, evolved_sec, dry_run=dry_run, allowed_roots=allowed_roots)
                 if applied_evolved:
+                    files_to_stage.add(str(evolved_target))
+                    files_to_stage.add(str(ledger_p))
                     evolved_id_match = re.search(r"\*\*([^*]+)\*\*", evolved_patch)
                     evolved_id = evolved_id_match.group(1).strip() if evolved_id_match else f"evolved_{pruned.get('id')}"
                     rec_entry = record_rule_in_ledger(
@@ -1464,7 +1532,13 @@ def apply_improvements(
     # -------------------------------------------------------------
     # Git Commit and Tagging
     # -------------------------------------------------------------
-    commit_info = git_commit_and_tag(repo_dir=repo_dir, message=commit_msg, tag=tag, dry_run=dry_run)
+    commit_info = git_commit_and_tag(
+        repo_dir=repo_dir,
+        message=commit_msg,
+        tag=tag,
+        dry_run=dry_run,
+        files_to_stage=list(files_to_stage) if files_to_stage else None
+    )
     commit_hash = commit_info.get("commit_hash", "UNKNOWN")
 
     output_summary = {

@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.1] - 2026-09-10
+
+### 🛡️ Security Hardening & Runtime Defenses
+
+- **Safe Eval Sandbox (`scripts/verify_improvements.py`)**:
+  - Prevent Arbitrary Code Execution (RCE) during automated skill verification by defaulting to static AST inspection (`ast.parse`) instead of executing arbitrary third-party test subprocesses.
+  - Added `--allow-code-eval` opt-in flag for explicit runtime test execution.
+  - Guard JSON evaluation specs against path traversal attacks (`../`) in required files and assertion targets via `is_relative_to()`.
+  - Guard `auto_revert` against reverting manual user commits by verifying commit message subject headers before execution.
+
+- **Git Option Injection Mitigation (`scripts/check_upstream.py`)**:
+  - Added `is_valid_git_url()` to reject option flags (`--upload-pack`, `-u`) and enforce safe protocol schemes (`https`, `http`, `git`, `ssh`).
+  - Added `--` argument separators across all git subprocess commands (`git clone`, `git ls-remote`).
+
+- **Prompt Injection & Path Traversal Guards (`scripts/apply_improvements.py`)**:
+  - Added `_sanitize_token()` to strip newlines, carriage returns, markdown backticks, and HTML tags from error tokens and telemetry before rule synthesis.
+  - Added `allowed_roots` validation in `apply_patch_to_file()` to prevent writing patches outside designated skill boundaries.
+  - Replaced blind `git add -A` with explicit file staging (`files_to_stage`) to prevent committing untracked files or secrets.
+
+### 🧪 Testing & Verification
+- Added automated security test suite [`tests/test_security_hardening.py`](tests/test_security_hardening.py) verifying URL sanitization, prompt injection defenses, path traversal guards, static eval behavior, and auto-revert safety.
+
+---
+
 ## [2.1.0] - 2026-09-10
 
 ### 🚀 Initial Public Open-Source Release
@@ -38,4 +62,5 @@ This is the premier public open-source release of **AGENT-CI**, introducing a co
 
 ---
 
+[2.1.1]: https://github.com/Mantaray91/agent-ci/releases/tag/v2.1.1
 [2.1.0]: https://github.com/Mantaray91/agent-ci/releases/tag/v2.1.0
