@@ -1,0 +1,270 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="100%" height="auto">
+  <defs>
+    <!-- Background Gradients -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b0f19"/>
+      <stop offset="40%" stop-color="#0d1424"/>
+      <stop offset="100%" stop-color="#07090e"/>
+    </linearGradient>
+
+    <radialGradient id="ambientCyan" cx="20%" cy="30%" r="55%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.18"/>
+      <stop offset="50%" stop-color="#0284c7" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#0b0f19" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="ambientPurple" cx="82%" cy="35%" r="50%">
+      <stop offset="0%" stop-color="#818cf8" stop-opacity="0.16"/>
+      <stop offset="50%" stop-color="#4f46e5" stop-opacity="0.04"/>
+      <stop offset="100%" stop-color="#0b0f19" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="ambientEmerald" cx="50%" cy="90%" r="45%">
+      <stop offset="0%" stop-color="#34d399" stop-opacity="0.12"/>
+      <stop offset="50%" stop-color="#059669" stop-opacity="0.02"/>
+      <stop offset="100%" stop-color="#0b0f19" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Accent Gradients -->
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="35%" stop-color="#e0f2fe"/>
+      <stop offset="70%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+
+    <linearGradient id="accentCyanIndigo" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.6"/>
+      <stop offset="50%" stop-color="#818cf8" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#34d399" stop-opacity="0.5"/>
+    </linearGradient>
+
+    <linearGradient id="pillGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0369a1" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.6"/>
+    </linearGradient>
+
+    <linearGradient id="pillGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4338ca" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.6"/>
+    </linearGradient>
+
+    <linearGradient id="pillGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#065f46" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.6"/>
+    </linearGradient>
+
+    <linearGradient id="pillGrad4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#581c87" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.6"/>
+    </linearGradient>
+
+    <!-- Filters -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="glowSoft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="shadowCard" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+
+    <!-- Cyber Grid Pattern -->
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse">
+      <path d="M 36 0 L 0 0 0 36" fill="none" stroke="#1e293b" stroke-width="0.7" stroke-opacity="0.35"/>
+    </pattern>
+    <pattern id="dots" width="18" height="18" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="0.9" fill="#38bdf8" fill-opacity="0.18"/>
+    </pattern>
+  </defs>
+
+  <style>
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; }
+    .sans { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+  </style>
+
+  <!-- Canvas Background -->
+  <rect width="1200" height="420" rx="18" fill="url(#bgGrad)"/>
+  <rect width="1200" height="420" rx="18" fill="url(#grid)"/>
+  <rect width="1200" height="420" rx="18" fill="url(#dots)"/>
+  <rect width="1200" height="420" rx="18" fill="url(#ambientCyan)"/>
+  <rect width="1200" height="420" rx="18" fill="url(#ambientPurple)"/>
+  <rect width="1200" height="420" rx="18" fill="url(#ambientEmerald)"/>
+
+  <!-- Subtle Outer Border Frame -->
+  <rect x="1.5" y="1.5" width="1197" height="417" rx="17" fill="none" stroke="#1e293b" stroke-width="1.5"/>
+  <line x1="80" y1="1.5" x2="1120" y2="1.5" stroke="url(#borderGrad)" stroke-width="2"/>
+
+  <!-- Decorative Cyber Corner Accents -->
+  <path d="M 20 35 L 20 20 L 35 20" fill="none" stroke="#38bdf8" stroke-width="2" stroke-opacity="0.7"/>
+  <path d="M 1180 35 L 1180 20 L 1165 20" fill="none" stroke="#818cf8" stroke-width="2" stroke-opacity="0.7"/>
+  <path d="M 20 385 L 20 400 L 35 400" fill="none" stroke="#34d399" stroke-width="2" stroke-opacity="0.7"/>
+  <path d="M 1180 385 L 1180 400 L 1165 400" fill="none" stroke="#38bdf8" stroke-width="2" stroke-opacity="0.7"/>
+
+  <!-- Top Navigation / Status Header Bar -->
+  <g transform="translate(30, 20)">
+    <!-- Terminal Dots -->
+    <circle cx="12" cy="14" r="4.5" fill="#ef4444" opacity="0.8"/>
+    <circle cx="28" cy="14" r="4.5" fill="#f59e0b" opacity="0.8"/>
+    <circle cx="44" cy="14" r="4.5" fill="#10b981" opacity="0.8"/>
+
+    <!-- Breadcrumb / Engine Mode -->
+    <rect x="70" y="2" width="220" height="24" rx="12" fill="#0f172a" fill-opacity="0.8" stroke="#1e293b" stroke-width="1"/>
+    <circle cx="84" cy="14" r="3.5" fill="#34d399" filter="url(#glow)"/>
+    <text x="96" y="18" class="sans" fill="#94a3b8" font-size="11" font-weight="600" letter-spacing="0.8">AUTONOMOUS AGENT CI</text>
+
+    <!-- Version & Status Tag -->
+    <g transform="translate(860, 0)">
+      <rect x="0" y="2" width="130" height="24" rx="12" fill="#0f172a" fill-opacity="0.8" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.4"/>
+      <circle cx="14" cy="14" r="3" fill="#38bdf8"/>
+      <text x="26" y="18" class="sans" fill="#38bdf8" font-size="11" font-weight="700" letter-spacing="0.5">v2.1 RELEASE</text>
+
+      <rect x="140" y="2" width="140" height="24" rx="12" fill="#064e3b" fill-opacity="0.4" stroke="#10b981" stroke-width="1" stroke-opacity="0.5"/>
+      <circle cx="154" cy="14" r="3.5" fill="#34d399" filter="url(#glow)"/>
+      <text x="165" y="18" class="sans" fill="#6ee7b7" font-size="11" font-weight="700" letter-spacing="0.5">CLOSED-LOOP</text>
+    </g>
+
+    <!-- Horizontal Divider -->
+    <line x1="0" y1="36" x2="1140" y2="36" stroke="#1e293b" stroke-width="1" stroke-opacity="0.8"/>
+  </g>
+
+  <!-- ==================== LEFT: LOGO & EMBLEM ==================== -->
+  <g transform="translate(145, 235)">
+    <!-- Ambient Halo Behind Emblem -->
+    <circle cx="0" cy="0" r="105" fill="#38bdf8" fill-opacity="0.07" filter="url(#glowSoft)"/>
+    <circle cx="0" cy="0" r="88" fill="#818cf8" fill-opacity="0.05"/>
+
+    <!-- Outer Decorative Gear Ring -->
+    <circle cx="0" cy="0" r="82" fill="none" stroke="#1e293b" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="76" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="8 6" stroke-opacity="0.5"/>
+    <circle cx="0" cy="0" r="68" fill="none" stroke="#818cf8" stroke-width="1" stroke-dasharray="16 8" stroke-opacity="0.4"/>
+
+    <!-- Central Tech Shield Hexagon -->
+    <polygon points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" fill="#0f172a" fill-opacity="0.9" stroke="url(#borderGrad)" stroke-width="2" filter="url(#shadowCard)"/>
+
+    <!-- 7 Orbiting Phase Nodes representing the 7 Pipeline Phases -->
+    <circle cx="0" cy="-76" r="4.5" fill="#38bdf8" filter="url(#glow)"/>
+    <circle cx="59" cy="-47" r="4" fill="#38bdf8"/>
+    <circle cx="74" cy="17" r="4" fill="#818cf8"/>
+    <circle cx="33" cy="68" r="4" fill="#a855f7"/>
+    <circle cx="-33" cy="68" r="4" fill="#c084fc"/>
+    <circle cx="-74" cy="17" r="4" fill="#34d399" filter="url(#glow)"/>
+    <circle cx="-59" cy="-47" r="4" fill="#10b981"/>
+
+    <!-- Continuous Infinite CI Loop Logo Icon -->
+    <path d="M -26 -1 C -26 -16 -12 -22 0 -1 C 12 20 26 16 26 0 C 26 -16 12 -20 0 0 C -12 20 -26 14 -26 -1 Z" 
+          fill="none" stroke="url(#titleGrad)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+    <path d="M -26 -1 C -26 -16 -12 -22 0 -1 C 12 20 26 16 26 0 C 26 -16 12 -20 0 0 C -12 20 -26 14 -26 -1 Z" 
+          fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Core Glowing Nucleus -->
+    <circle cx="0" cy="0" r="5" fill="#38bdf8" filter="url(#glow)"/>
+    <circle cx="0" cy="0" r="2.5" fill="#ffffff"/>
+
+    <!-- Subtitle below emblem -->
+    <text x="0" y="80" class="mono" fill="#64748b" font-size="9.5" font-weight="700" letter-spacing="1.5" text-anchor="middle">CONTINUOUS LOOP</text>
+  </g>
+
+  <!-- ==================== RIGHT: HEADLINE & CONTENT ==================== -->
+  <g transform="translate(275, 78)">
+    <!-- Sub-badge eyebrow -->
+    <g transform="translate(0, 10)">
+      <rect x="0" y="0" width="265" height="24" rx="12" fill="#1e1b4b" fill-opacity="0.65" stroke="#4338ca" stroke-width="1.2"/>
+      <!-- Sparkle Icon -->
+      <path d="M 16 12 L 18 7 L 20 12 L 25 14 L 20 16 L 18 21 L 16 16 L 11 14 Z" fill="#818cf8"/>
+      <text x="32" y="16" class="sans" fill="#c7d2fe" font-size="11" font-weight="700" letter-spacing="1">SELF-IMPROVING CI ENGINE</text>
+    </g>
+
+    <!-- Main Title: AGENT-CI -->
+    <g transform="translate(0, 80)">
+      <text x="0" y="0" class="sans" fill="url(#titleGrad)" font-size="68" font-weight="900" letter-spacing="-1.5px">AGENT-CI</text>
+      
+      <!-- Version pill badge attached to title -->
+      <g transform="translate(385, -50)">
+        <rect x="0" y="0" width="76" height="30" rx="15" fill="#1e1b4b" fill-opacity="0.8" stroke="#818cf8" stroke-width="1.5"/>
+        <text x="38" y="20" class="sans" fill="#a5b4fc" font-size="14" font-weight="800" text-anchor="middle">v2.1</text>
+      </g>
+    </g>
+
+    <!-- Tagline -->
+    <text x="0" y="122" class="sans" fill="#f8fafc" font-size="21" font-weight="600" letter-spacing="-0.3px">
+      Autonomous Self-Improving Continuous Integration for AI Coding Agents
+    </text>
+
+    <!-- Secondary descriptive subline -->
+    <text x="0" y="150" class="sans" fill="#94a3b8" font-size="13.5" font-weight="400">
+      Closed-loop telemetry audit, composite health scoring, rule lifecycle pruning &amp; zero-regression auto-revert.
+    </text>
+
+    <!-- ==================== FEATURE PILLS ==================== -->
+    <g transform="translate(0, 185)">
+      <!-- Pill 1: 7-Phase Pipeline -->
+      <g transform="translate(0, 0)">
+        <rect x="0" y="0" width="195" height="46" rx="10" fill="url(#pillGrad1)" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.5" filter="url(#shadowCard)"/>
+        <circle cx="18" cy="23" r="5" fill="#38bdf8" filter="url(#glow)"/>
+        <text x="30" y="20" class="sans" fill="#ffffff" font-size="12" font-weight="700">7-Phase Pipeline</text>
+        <text x="30" y="34" class="sans" fill="#7dd3fc" font-size="10" font-weight="500">Discovery to report</text>
+      </g>
+
+      <!-- Pill 2: Rule Efficacy & Pruning -->
+      <g transform="translate(207, 0)">
+        <rect x="0" y="0" width="215" height="46" rx="10" fill="url(#pillGrad2)" stroke="#818cf8" stroke-width="1.2" stroke-opacity="0.5" filter="url(#shadowCard)"/>
+        <circle cx="18" cy="23" r="5" fill="#818cf8" filter="url(#glow)"/>
+        <text x="30" y="20" class="sans" fill="#ffffff" font-size="12" font-weight="700">Rule Efficacy &amp; Pruning</text>
+        <text x="30" y="34" class="sans" fill="#c7d2fe" font-size="10" font-weight="500">Decay half-life ledger</text>
+      </g>
+
+      <!-- Pill 3: Regression Auto-Revert Guard -->
+      <g transform="translate(434, 0)">
+        <rect x="0" y="0" width="240" height="46" rx="10" fill="url(#pillGrad3)" stroke="#34d399" stroke-width="1.2" stroke-opacity="0.5" filter="url(#shadowCard)"/>
+        <circle cx="18" cy="23" r="5" fill="#34d399" filter="url(#glow)"/>
+        <text x="30" y="20" class="sans" fill="#ffffff" font-size="12" font-weight="700">Regression Auto-Revert Guard</text>
+        <text x="30" y="34" class="sans" fill="#a7f3d0" font-size="10" font-weight="500">Automated rollback guard</text>
+      </g>
+
+      <!-- Pill 4: Obsidian Mirroring -->
+      <g transform="translate(686, 0)">
+        <rect x="0" y="0" width="195" height="46" rx="10" fill="url(#pillGrad4)" stroke="#a855f7" stroke-width="1.2" stroke-opacity="0.5" filter="url(#shadowCard)"/>
+        <circle cx="18" cy="23" r="5" fill="#c084fc" filter="url(#glow)"/>
+        <text x="30" y="20" class="sans" fill="#ffffff" font-size="12" font-weight="700">Obsidian Mirroring</text>
+        <text x="30" y="34" class="sans" fill="#e9d5ff" font-size="10" font-weight="500">Interactive vault sync</text>
+      </g>
+    </g>
+
+    <!-- Bottom Telemetry Ticker Strip -->
+    <g transform="translate(0, 260)">
+      <line x1="0" y1="0" x2="880" y2="0" stroke="#1e293b" stroke-width="1" stroke-opacity="0.8"/>
+      
+      <!-- Metrics -->
+      <g transform="translate(0, 18)">
+        <circle cx="4" cy="0" r="2.5" fill="#38bdf8"/>
+        <text x="14" y="3" class="mono" fill="#64748b" font-size="10.5" font-weight="600">AUDIT: <tspan fill="#38bdf8">ADAPTIVE BATCHING</tspan></text>
+        
+        <circle cx="230" cy="0" r="2.5" fill="#818cf8"/>
+        <text x="240" y="3" class="mono" fill="#64748b" font-size="10.5" font-weight="600">SCORE: <tspan fill="#818cf8">COMPOSITE + LR</tspan></text>
+        
+        <circle cx="450" cy="0" r="2.5" fill="#34d399"/>
+        <text x="460" y="3" class="mono" fill="#64748b" font-size="10.5" font-weight="600">SAFETY: <tspan fill="#34d399">ZERO REGRESSION</tspan></text>
+        
+        <circle cx="680" cy="0" r="2.5" fill="#a855f7"/>
+        <text x="690" y="3" class="mono" fill="#64748b" font-size="10.5" font-weight="600">DASHBOARD: <tspan fill="#c084fc">OBSIDIAN MIRROR</tspan></text>
+      </g>
+    </g>
+  </g>
+</svg>

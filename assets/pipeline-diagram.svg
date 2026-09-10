@@ -1,0 +1,349 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" width="100%" height="auto">
+  <defs>
+    <!-- Background Gradients -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0e17"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#06090f"/>
+    </linearGradient>
+
+    <!-- Accent & Glow Gradients -->
+    <radialGradient id="cyanGlow" cx="20%" cy="20%" r="45%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#0a0e17" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="purpleGlow" cx="80%" cy="80%" r="50%">
+      <stop offset="0%" stop-color="#818cf8" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#0a0e17" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="emeraldGlow" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#34d399" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#0a0e17" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="50%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+
+    <!-- Card Background Gradients -->
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#161f30" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#0c121e" stop-opacity="0.95"/>
+    </linearGradient>
+    <linearGradient id="cardP5Grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#0c121e" stop-opacity="0.95"/>
+    </linearGradient>
+
+    <!-- Grid Pattern -->
+    <pattern id="diagGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.6" stroke-opacity="0.35"/>
+    </pattern>
+
+    <!-- Filters -->
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Markers -->
+    <marker id="arrowCyan" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowIndigo" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#818cf8"/>
+    </marker>
+    <marker id="arrowPurple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#c084fc"/>
+    </marker>
+    <marker id="arrowEmerald" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="arrowTeal" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2dd4bf"/>
+    </marker>
+  </defs>
+
+  <style>
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    .sans { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    .card-title { font-size: 15px; font-weight: 700; fill: #ffffff; }
+    .script-name { font-size: 11px; font-weight: 600; fill: #94a3b8; }
+    .bullet { font-size: 11px; font-weight: 400; fill: #cbd5e1; }
+  </style>
+
+  <!-- Background Canvas -->
+  <rect width="1200" height="680" rx="16" fill="url(#bgGrad)"/>
+  <rect width="1200" height="680" rx="16" fill="url(#diagGrid)"/>
+  <rect width="1200" height="680" rx="16" fill="url(#cyanGlow)"/>
+  <rect width="1200" height="680" rx="16" fill="url(#purpleGlow)"/>
+  <rect width="1200" height="680" rx="16" fill="url(#emeraldGlow)"/>
+
+  <!-- Outer Frame -->
+  <rect x="1.5" y="1.5" width="1197" height="677" rx="15" fill="none" stroke="#1e293b" stroke-width="1.5"/>
+
+  <!-- ==================== HEADER ==================== -->
+  <g transform="translate(40, 24)">
+    <!-- Eyebrow & Title -->
+    <text x="0" y="16" class="mono" fill="#38bdf8" font-size="11" font-weight="700" letter-spacing="1.5">AGENT-CI ARCHITECTURE // CLOSED-LOOP EXECUTION</text>
+    <text x="0" y="46" class="sans" fill="url(#titleGrad)" font-size="28" font-weight="900" letter-spacing="-0.5px">7-Phase Autonomous Continuous Integration Pipeline</text>
+    <text x="0" y="68" class="sans" fill="#94a3b8" font-size="13" font-weight="400">End-to-end self-improving loop: multi-workspace skill discovery, telemetry scoring, rule decay, and regression auto-revert</text>
+
+    <!-- Top-Right Badge -->
+    <g transform="translate(850, 4)">
+      <rect x="0" y="0" width="270" height="38" rx="19" fill="#0f172a" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.4"/>
+      <circle cx="20" cy="19" r="4.5" fill="#34d399" filter="url(#glow)"/>
+      <text x="34" y="23" class="sans" fill="#f8fafc" font-size="11.5" font-weight="700">100% AUTONOMOUS</text>
+      <text x="165" y="23" class="mono" fill="#94a3b8" font-size="10.5">v2.1 PIPELINE</text>
+    </g>
+
+    <!-- Divider -->
+    <line x1="0" y1="84" x2="1120" y2="84" stroke="#1e293b" stroke-width="1" stroke-opacity="0.8"/>
+  </g>
+
+  <!-- ==================== CONNECTING BUS & ARROWS ==================== -->
+  <!-- Arrow 0 -> 1 -->
+  <g>
+    <line x1="285" y1="215" x2="325" y2="215" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrowCyan)"/>
+    <rect x="285" y="203" width="38" height="16" rx="8" fill="#0b1324" stroke="#1e293b" stroke-width="1"/>
+    <text x="304" y="214" class="mono" fill="#38bdf8" font-size="9" font-weight="700" text-anchor="middle">MAP</text>
+  </g>
+
+  <!-- Arrow 1 -> 2 -->
+  <g>
+    <line x1="575" y1="215" x2="615" y2="215" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrowCyan)"/>
+    <rect x="574" y="203" width="40" height="16" rx="8" fill="#0b1324" stroke="#1e293b" stroke-width="1"/>
+    <text x="594" y="214" class="mono" fill="#38bdf8" font-size="9" font-weight="700" text-anchor="middle">LOGS</text>
+  </g>
+
+  <!-- Arrow 2 -> 3 -->
+  <g>
+    <line x1="865" y1="215" x2="905" y2="215" stroke="#818cf8" stroke-width="2.5" marker-end="url(#arrowIndigo)"/>
+    <rect x="864" y="203" width="40" height="16" rx="8" fill="#0b1324" stroke="#1e293b" stroke-width="1"/>
+    <text x="884" y="214" class="mono" fill="#818cf8" font-size="9" font-weight="700" text-anchor="middle">SCORES</text>
+  </g>
+
+  <!-- Bus Transition: Phase 3 -> Phase 4 -->
+  <g>
+    <path d="M 1032 320 L 1032 352 L 245 352 L 245 380" fill="none" stroke="#818cf8" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrowPurple)"/>
+    <!-- Transition Badge in middle channel -->
+    <g transform="translate(440, 340)">
+      <rect x="0" y="0" width="320" height="24" rx="12" fill="#0d1424" stroke="#818cf8" stroke-width="1.2" filter="url(#cardShadow)"/>
+      <circle cx="14" cy="12" r="3" fill="#818cf8"/>
+      <text x="160" y="16" class="mono" fill="#c7d2fe" font-size="10.5" font-weight="700" text-anchor="middle">AUDIT SCORES &amp; RECOMMENDATIONS ➜</text>
+    </g>
+  </g>
+
+  <!-- Arrow 4 -> 5 -->
+  <g>
+    <line x1="400" y1="492" x2="440" y2="492" stroke="#c084fc" stroke-width="2.5" marker-end="url(#arrowPurple)"/>
+    <rect x="397" y="480" width="44" height="16" rx="8" fill="#1e1430" stroke="#a855f7" stroke-width="0.8"/>
+    <text x="419" y="491" class="mono" fill="#e9d5ff" font-size="9" font-weight="700" text-anchor="middle">PATCH</text>
+  </g>
+
+  <!-- Arrow 5 -> 6 -->
+  <g>
+    <line x1="785" y1="492" x2="825" y2="492" stroke="#34d399" stroke-width="2.5" marker-end="url(#arrowTeal)"/>
+    <rect x="784" y="480" width="42" height="16" rx="8" fill="#052e16" stroke="#10b981" stroke-width="0.8"/>
+    <text x="805" y="491" class="mono" fill="#6ee7b7" font-size="9" font-weight="700" text-anchor="middle">VERIFIED</text>
+  </g>
+
+  <!-- ==================== CLOSED-LOOP CI FEEDBACK CONDUIT ==================== -->
+  <g>
+    <!-- Path looping from Card 6 back around the bottom into Card 0 -->
+    <path d="M 1140 492 L 1175 492 L 1175 636 L 20 636 L 20 215 L 35 215" 
+          fill="none" stroke="#34d399" stroke-width="2.5" stroke-dasharray="8 5" marker-end="url(#arrowCyan)" filter="url(#glow)"/>
+    
+    <!-- Central Closed-Loop Indicator Badge at bottom -->
+    <g transform="translate(350, 624)">
+      <rect x="0" y="0" width="500" height="24" rx="12" fill="#052e16" fill-opacity="0.9" stroke="#34d399" stroke-width="1.4" filter="url(#cardShadow)"/>
+      <circle cx="18" cy="12" r="4" fill="#34d399" filter="url(#glow)"/>
+      <text x="250" y="16" class="sans" fill="#a7f3d0" font-size="11.5" font-weight="800" text-anchor="middle" letter-spacing="0.5">
+        ⟲ CLOSED-LOOP CI: HARDENED RULES &amp; SKILLS ACTIVE IN NEXT SESSION
+      </text>
+    </g>
+  </g>
+
+  <!-- ==================== ROW 1 CARDS ==================== -->
+
+  <!-- CARD 0: AUTO-DISCOVERY -->
+  <g transform="translate(40, 115)">
+    <rect width="245" height="205" rx="12" fill="url(#cardGrad)" stroke="#38bdf8" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <!-- Card Header -->
+    <rect x="12" y="12" width="75" height="20" rx="6" fill="#0369a1" fill-opacity="0.3" stroke="#38bdf8" stroke-width="1"/>
+    <text x="49" y="26" class="mono" fill="#38bdf8" font-size="10" font-weight="800" text-anchor="middle">PHASE 00</text>
+    <text x="12" y="52" class="sans card-title">Auto-Discovery</text>
+    <rect x="12" y="60" width="145" height="18" rx="4" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+    <text x="16" y="73" class="mono script-name">discover_skills.py</text>
+    <line x1="12" y1="88" x2="233" y2="88" stroke="#1e293b" stroke-width="1"/>
+    <!-- Bullets -->
+    <g transform="translate(12, 106)">
+      <circle cx="4" cy="-3" r="2.5" fill="#38bdf8"/>
+      <text x="14" y="0" class="sans bullet">Multi-workspace tree discovery</text>
+      <circle cx="4" cy="21" r="2.5" fill="#38bdf8"/>
+      <text x="14" y="24" class="sans bullet">YAML frontmatter extraction</text>
+      <circle cx="4" cy="45" r="2.5" fill="#38bdf8"/>
+      <text x="14" y="48" class="sans bullet">Cross-platform path resolver</text>
+      <circle cx="4" cy="69" r="2.5" fill="#38bdf8"/>
+      <text x="14" y="72" class="sans bullet">Dynamic skill registry map</text>
+    </g>
+  </g>
+
+  <!-- CARD 1: LOG AUDIT -->
+  <g transform="translate(330, 115)">
+    <rect width="245" height="205" rx="12" fill="url(#cardGrad)" stroke="#0ea5e9" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <!-- Card Header -->
+    <rect x="12" y="12" width="75" height="20" rx="6" fill="#0284c7" fill-opacity="0.3" stroke="#0ea5e9" stroke-width="1"/>
+    <text x="49" y="26" class="mono" fill="#38bdf8" font-size="10" font-weight="800" text-anchor="middle">PHASE 01</text>
+    <text x="12" y="52" class="sans card-title">Log Audit</text>
+    <rect x="12" y="60" width="125" height="18" rx="4" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+    <text x="16" y="73" class="mono script-name">parse_logs.py</text>
+    <line x1="12" y1="88" x2="233" y2="88" stroke="#1e293b" stroke-width="1"/>
+    <!-- Bullets -->
+    <g transform="translate(12, 106)">
+      <circle cx="4" cy="-3" r="2.5" fill="#0ea5e9"/>
+      <text x="14" y="0" class="sans bullet">Session &amp; CLI log ingestion</text>
+      <circle cx="4" cy="21" r="2.5" fill="#0ea5e9"/>
+      <text x="14" y="24" class="sans bullet">Tool failure classification</text>
+      <circle cx="4" cy="45" r="2.5" fill="#0ea5e9"/>
+      <text x="14" y="48" class="sans bullet">Adaptive batch size window</text>
+      <circle cx="4" cy="69" r="2.5" fill="#0ea5e9"/>
+      <text x="14" y="72" class="sans bullet">Error dedup &amp; pattern match</text>
+    </g>
+  </g>
+
+  <!-- CARD 2: SCORE ENGINE -->
+  <g transform="translate(620, 115)">
+    <rect width="245" height="205" rx="12" fill="url(#cardGrad)" stroke="#818cf8" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <!-- Card Header -->
+    <rect x="12" y="12" width="75" height="20" rx="6" fill="#4338ca" fill-opacity="0.3" stroke="#818cf8" stroke-width="1"/>
+    <text x="49" y="26" class="mono" fill="#818cf8" font-size="10" font-weight="800" text-anchor="middle">PHASE 02</text>
+    <text x="12" y="52" class="sans card-title">Score Engine</text>
+    <rect x="12" y="60" width="138" height="18" rx="4" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+    <text x="16" y="73" class="mono script-name">score_engine.py</text>
+    <line x1="12" y1="88" x2="233" y2="88" stroke="#1e293b" stroke-width="1"/>
+    <!-- Bullets -->
+    <g transform="translate(12, 106)">
+      <circle cx="4" cy="-3" r="2.5" fill="#818cf8"/>
+      <text x="14" y="0" class="sans bullet">Weighted composite scoring</text>
+      <circle cx="4" cy="21" r="2.5" fill="#818cf8"/>
+      <text x="14" y="24" class="sans bullet">Learning Rate metric (Δscore)</text>
+      <circle cx="4" cy="45" r="2.5" fill="#818cf8"/>
+      <text x="14" y="48" class="sans bullet">Tool reliability analysis</text>
+      <circle cx="4" cy="69" r="2.5" fill="#818cf8"/>
+      <text x="14" y="72" class="sans bullet">Skill degradation triggers</text>
+    </g>
+  </g>
+
+  <!-- CARD 3: UPSTREAM CHECK -->
+  <g transform="translate(910, 115)">
+    <rect width="245" height="205" rx="12" fill="url(#cardGrad)" stroke="#60a5fa" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <!-- Card Header -->
+    <rect x="12" y="12" width="75" height="20" rx="6" fill="#1d4ed8" fill-opacity="0.3" stroke="#60a5fa" stroke-width="1"/>
+    <text x="49" y="26" class="mono" fill="#60a5fa" font-size="10" font-weight="800" text-anchor="middle">PHASE 03</text>
+    <text x="12" y="52" class="sans card-title">Upstream Check</text>
+    <rect x="12" y="60" width="150" height="18" rx="4" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+    <text x="16" y="73" class="mono script-name">check_upstream.py</text>
+    <line x1="12" y1="88" x2="233" y2="88" stroke="#1e293b" stroke-width="1"/>
+    <!-- Bullets -->
+    <g transform="translate(12, 106)">
+      <circle cx="4" cy="-3" r="2.5" fill="#60a5fa"/>
+      <text x="14" y="0" class="sans bullet">Git remote &amp; NPX registry</text>
+      <circle cx="4" cy="21" r="2.5" fill="#60a5fa"/>
+      <text x="14" y="24" class="sans bullet">Symlink &amp; vendor audit</text>
+      <circle cx="4" cy="45" r="2.5" fill="#60a5fa"/>
+      <text x="14" y="48" class="sans bullet">Breaking change detection</text>
+      <circle cx="4" cy="69" r="2.5" fill="#60a5fa"/>
+      <text x="14" y="72" class="sans bullet">Outdated skill drift alert</text>
+    </g>
+  </g>
+
+  <!-- ==================== ROW 2 CARDS ==================== -->
+
+  <!-- CARD 4: APPLY IMPROVEMENTS & RULE LIFECYCLE -->
+  <g transform="translate(90, 385)">
+    <rect width="310" height="215" rx="12" fill="url(#cardGrad)" stroke="#c084fc" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <!-- Card Header -->
+    <rect x="12" y="12" width="75" height="20" rx="6" fill="#581c87" fill-opacity="0.4" stroke="#c084fc" stroke-width="1"/>
+    <text x="49" y="26" class="mono" fill="#c084fc" font-size="10" font-weight="800" text-anchor="middle">PHASE 04</text>
+    <text x="12" y="52" class="sans card-title">Apply &amp; Rule Lifecycle</text>
+    <rect x="12" y="60" width="170" height="18" rx="4" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+    <text x="16" y="73" class="mono script-name">apply_improvements.py</text>
+    <line x1="12" y1="88" x2="298" y2="88" stroke="#1e293b" stroke-width="1"/>
+    <!-- Bullets -->
+    <g transform="translate(12, 106)">
+      <circle cx="4" cy="-3" r="2.5" fill="#c084fc"/>
+      <text x="14" y="0" class="sans bullet">Autonomous prompt &amp; rule mutation</text>
+      <circle cx="4" cy="21" r="2.5" fill="#c084fc"/>
+      <text x="14" y="24" class="sans bullet">5-State Ledger: proposed ➔ active ➔ permanent</text>
+      <circle cx="4" cy="45" r="2.5" fill="#c084fc"/>
+      <text x="14" y="48" class="sans bullet">Half-life decay score &amp; rule pruning</text>
+      <circle cx="4" cy="69" r="2.5" fill="#c084fc"/>
+      <text x="14" y="72" class="sans bullet">Target routing: GEMINI.md, AGENTS.md</text>
+      <circle cx="4" cy="93" r="2.5" fill="#c084fc"/>
+      <text x="14" y="96" class="sans bullet">Prompt hardening against regression</text>
+    </g>
+  </g>
+
+  <!-- CARD 5: VERIFICATION & AUTO-REVERT (REGRESSION GUARD) -->
+  <g transform="translate(445, 385)">
+    <rect width="340" height="215" rx="12" fill="url(#cardP5Grad)" stroke="#34d399" stroke-width="2" filter="url(#cardShadow)"/>
+    <!-- Card Header -->
+    <rect x="12" y="12" width="75" height="20" rx="6" fill="#064e3b" fill-opacity="0.6" stroke="#34d399" stroke-width="1"/>
+    <text x="49" y="26" class="mono" fill="#34d399" font-size="10" font-weight="800" text-anchor="middle">PHASE 05</text>
+    <rect x="95" y="12" width="135" height="20" rx="6" fill="#065f46" stroke="#10b981" stroke-width="1"/>
+    <text x="162" y="26" class="sans" fill="#a7f3d0" font-size="10" font-weight="800" text-anchor="middle">REGRESSION GUARD</text>
+    <text x="12" y="52" class="sans card-title">Verification &amp; Auto-Revert</text>
+    <rect x="12" y="60" width="175" height="18" rx="4" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+    <text x="16" y="73" class="mono script-name">verify_improvements.py</text>
+    <line x1="12" y1="88" x2="328" y2="88" stroke="#047857" stroke-width="1"/>
+    <!-- Bullets -->
+    <g transform="translate(12, 106)">
+      <circle cx="4" cy="-3" r="2.5" fill="#34d399" filter="url(#glow)"/>
+      <text x="14" y="0" class="sans bullet">Automated eval benchmark execution</text>
+      <circle cx="4" cy="21" r="2.5" fill="#34d399"/>
+      <text x="14" y="24" class="sans bullet">Baseline comparison (score_after ≥ score_before)</text>
+      <circle cx="4" cy="45" r="2.5" fill="#ef4444" filter="url(#glow)"/>
+      <text x="14" y="48" class="sans bullet"><tspan fill="#f87171" font-weight="700">Auto-Revert Guard:</tspan> Instant rollback on fail</text>
+      <circle cx="4" cy="69" r="2.5" fill="#34d399"/>
+      <text x="14" y="72" class="sans bullet">Zero human supervision required</text>
+      <circle cx="4" cy="93" r="2.5" fill="#34d399"/>
+      <text x="14" y="96" class="sans bullet">Safe git state guarantee across iterations</text>
+    </g>
+  </g>
+
+  <!-- CARD 6: REPORTING & ARCHIVE (OBSIDIAN MIRROR) -->
+  <g transform="translate(830, 385)">
+    <rect width="310" height="215" rx="12" fill="url(#cardGrad)" stroke="#2dd4bf" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <!-- Card Header -->
+    <rect x="12" y="12" width="75" height="20" rx="6" fill="#115e59" fill-opacity="0.4" stroke="#2dd4bf" stroke-width="1"/>
+    <text x="49" y="26" class="mono" fill="#2dd4bf" font-size="10" font-weight="800" text-anchor="middle">PHASE 06</text>
+    <rect x="95" y="12" width="130" height="20" rx="6" fill="#134e4a" stroke="#14b8a6" stroke-width="1"/>
+    <text x="160" y="26" class="sans" fill="#99f6e4" font-size="10" font-weight="800" text-anchor="middle">OBSIDIAN MIRROR</text>
+    <text x="12" y="52" class="sans card-title">Reporting &amp; Archive</text>
+    <rect x="12" y="60" width="160" height="18" rx="4" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+    <text x="16" y="73" class="mono script-name">generate_report.py</text>
+    <line x1="12" y1="88" x2="298" y2="88" stroke="#1e293b" stroke-width="1"/>
+    <!-- Bullets -->
+    <g transform="translate(12, 106)">
+      <circle cx="4" cy="-3" r="2.5" fill="#2dd4bf"/>
+      <text x="14" y="0" class="sans bullet">Comprehensive CI execution report (GFM)</text>
+      <circle cx="4" cy="21" r="2.5" fill="#2dd4bf"/>
+      <text x="14" y="24" class="sans bullet">Composite health &amp; Learning Rate charts</text>
+      <circle cx="4" cy="45" r="2.5" fill="#2dd4bf"/>
+      <text x="14" y="48" class="sans bullet">Obsidian vault mirror sync with dataview</text>
+      <circle cx="4" cy="69" r="2.5" fill="#2dd4bf"/>
+      <text x="14" y="72" class="sans bullet">Permanent run ledger &amp; telemetry archive</text>
+      <circle cx="4" cy="93" r="2.5" fill="#2dd4bf"/>
+      <text x="14" y="96" class="sans bullet">Terminal dashboard &amp; CI badge emission</text>
+    </g>
+  </g>
+</svg>

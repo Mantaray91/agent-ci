@@ -1,0 +1,45 @@
+{
+  "skill_name": "agent-ci",
+  "evals": [
+    {
+      "id": 1,
+      "name": "revit_logs_analysis",
+      "prompt": "Run agent-ci on the Revit Drafter logs directory at '~/.agents/logs/sample'. Extract all failure telemetry and generate a Continuous Improvement report in the current workspace under agent-ci-reports/.",
+      "expected_output": "A markdown report in agent-ci-reports/ with executive summary, top bottlenecks, looping detection, and hardening recommendations.",
+      "files": [],
+      "expectations": [
+        "A valid telemetry JSON is generated with nodes and edges",
+        "A Markdown report is created in agent-ci-reports/",
+        "The report includes Executive Health Summary with Healthy, Warning, and Failed percentages",
+        "The report identifies tool thrashing / loops (e.g. repeated revit:execute_revit_code calls)",
+        "The report provides actionable hardening recommendations"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "multi_source_and_clean_logs",
+      "prompt": "Analyze a session log directory containing mixed CLI and Chat-Agentic sessions with 100% clean executions (no errors, no loops). Verify that agent-ci correctly classifies sources and reports a 100% healthy status.",
+      "expected_output": "A markdown report showing 100% healthy status with accurate source breakdown and zero critical bottlenecks.",
+      "files": [],
+      "expectations": [
+        "Correctly distinguishes CLI and Chat-Agentic source distributions",
+        "Health summary reports 100% Healthy sessions and 0% Failures",
+        "Reports 'No excessive looping or tool thrashing patterns detected'",
+        "Recommendations suggest maintaining healthy baseline without false alarms"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "fatal_crashes_and_user_corrections",
+      "prompt": "Analyze session logs that contain Level A fatal timeouts/crashes and Level C user prompt corrections (e.g., 'salah, ulangi'). Verify that agent-ci flags these high-severity failures and provides targeted rule recommendations.",
+      "expected_output": "A markdown report showing high failure rate, detailing Level A crashes and Level C correction signals.",
+      "files": [],
+      "expectations": [
+        "Detects Level A AbnormalTermination errors",
+        "Detects Level C UserCorrectionSignal errors",
+        "Flags the overall workspace as high friction / failure required",
+        "Recommends Scope Alignment (Grill-Me Gate) based on user correction detection"
+      ]
+    }
+  ]
+}

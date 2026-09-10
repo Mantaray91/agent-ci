@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  lint-and-validate:
+    name: Lint & Validate (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Syntax compilation check
+        run: |
+          python -m py_compile scripts/*.py
+
+      - name: CLI --help execution check for all 7 scripts
+        run: |
+          python scripts/discover_skills.py --help
+          python scripts/parse_logs.py --help
+          python scripts/score_engine.py --help
+          python scripts/check_upstream.py --help
+          python scripts/apply_improvements.py --help
+          python scripts/verify_improvements.py --help
+          python scripts/generate_report.py --help
+
+      - name: JSON validation for evals/evals.json
+        run: |
+          python -c "import json; json.load(open('evals/evals.json'))"
+
+      - name: SVG validation for assets/*.svg
+        run: |
+          python -c "import xml.etree.ElementTree as ET, glob; [ET.parse(f) for f in glob.glob('assets/*.svg')]"
