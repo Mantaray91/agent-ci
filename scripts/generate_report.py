@@ -842,7 +842,7 @@ def main():
     parser.add_argument("--verification", type=str, default=None, help="Path to verification result JSON.")
     parser.add_argument("--rule-ledger", type=str, default=os.path.expanduser("~/.agents/rule_ledger.json"), help="Path to rule ledger JSON (default: ~/.agents/rule_ledger.json).")
     parser.add_argument("--skill-map", "--registry", dest="skill_map", type=str, default=os.path.expanduser("~/.agents/project-skill-map.json"), help="Path to project-skill-map.json (default: ~/.agents/project-skill-map.json).")
-    parser.add_argument("--vault-dir", type=str, default="", help="Path to Obsidian vault Agent-CI directory (default: auto-detects ~/Obsidian_Main/Agent-CI).")
+    parser.add_argument("--vault-dir", type=str, default="", help="Path to Obsidian vault Agent-CI directory (default: auto-detects $OBSIDIAN_VAULT_DIR or ~/Obsidian/Agent-CI).")
     parser.add_argument("--mirror-obsidian", action="store_true", help="Output/trigger Obsidian dashboard format.")
     args = parser.parse_args()
 
@@ -947,9 +947,13 @@ def main():
         if args.vault_dir:
             vault_targets.append(Path(os.path.expanduser(args.vault_dir)))
         else:
-            default_vault = Path(os.path.expanduser("~/Obsidian_Main/Agent-CI"))
-            if default_vault.parent.exists():
-                vault_targets.append(default_vault)
+            env_vault = os.environ.get("OBSIDIAN_VAULT_DIR")
+            if env_vault:
+                vault_targets.append(Path(os.path.expanduser(env_vault)))
+            else:
+                default_vault = Path(os.path.expanduser("~/Obsidian/Agent-CI"))
+                if default_vault.parent.exists():
+                    vault_targets.append(default_vault)
 
         for vt in vault_targets:
             try:

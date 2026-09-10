@@ -42,11 +42,12 @@ def normalize_workspace_path(ws: str) -> Optional[Path]:
     # Normalize backslashes to forward slashes
     norm = cleaned.replace("\\", "/")
 
-    # Translate Windows Google Drive mount (G:/My Drive or g:/My Drive)
-    m = re.match(r"^[A-Za-z]:/My Drive(?:/(.*))?$", norm, re.IGNORECASE)
+    # Translate optional cloud drive mount if configured via environment variable
+    gdrive_mount = os.environ.get("AGENT_CI_GDRIVE_MOUNT", str(Path.home() / "gdrive"))
+    m = re.match(r"^[A-Za-z]:/(?:My Drive|gdrive)(?:/(.*))?$", norm, re.IGNORECASE)
     if m:
         subpath = m.group(1) or ""
-        candidate = Path.home() / "gdrive" / subpath
+        candidate = Path(os.path.expanduser(gdrive_mount)) / subpath
         if candidate.exists() and candidate.is_dir():
             return candidate.resolve()
 
@@ -118,10 +119,8 @@ def derive_project_scope(workspace: Path) -> Tuple[str, str]:
     """Derive project_name and workspace_pattern regex from workspace path.
 
     Normalization rules:
-    - '9. IBKR' -> 'IBKR'
-    - '11. Ai REVIT DRAFTER' -> 'REVIT'
-    - '14. Ai STRUCTURES ANALYSIS' -> 'STRUCTURES'
-    - '10. IHSG' -> 'IHSG'
+    - '01. Web-App-Backend' -> 'Web-App-Backend'
+    - '02. Data-Pipeline' -> 'Data-Pipeline'
 
     Args:
         workspace: Path to the workspace directory.
@@ -130,37 +129,22 @@ def derive_project_scope(workspace: Path) -> Tuple[str, str]:
         Tuple of (project_name, workspace_pattern).
     """
     dirname = workspace.name
-    # Match leading numbering prefix e.g. '9. IBKR', '11. Ai REVIT DRAFTER'
+    # Match leading numbering prefix e.g. '01. ProjectName'
     m_num = re.match(r"^(\d+)[\.\-_ ]*(.+)$", dirname)
     num = m_num.group(1) if m_num else ""
     remainder = m_num.group(2).strip() if m_num else dirname.strip()
-    rem_upper = remainder.upper()
 
-    if "REVIT" in rem_upper:
-        project_name = "REVIT"
-    elif "STRUCTURE" in rem_upper:
-        project_name = "STRUCTURES"
-    elif "IBKR" in rem_upper:
-        project_name = "IBKR"
-    elif "IHSG" in rem_upper:
-        project_name = "IHSG"
-    else:
-        # Strip leading Ai / AI prefix
-        clean = re.sub(r"^AI[\s_\-]+", "", remainder, flags=re.IGNORECASE).strip()
-        words = re.split(r"[\s_\-]+", clean)
-        project_name = words[0].upper() if words and words[0] else dirname.upper()
+    # Strip generic prefixes like 'Ai ' / 'Project ' if present
+    clean = re.sub(r"^(?:AI|PROJECT)[\s_\-]+", "", remainder, flags=re.IGNORECASE).strip()
+    words = re.split(r"[\s_\-]+", clean)
+    project_name = words[0].upper() if words and words[0] else remainder.upper()
 
     # Generate workspace_pattern regex
+    esc_proj = re.escape(project_name)
     if num:
-        if re.search(r"\bAi\b", dirname, re.IGNORECASE):
-            workspace_pattern = f"{num}.*{project_name}|Ai.{project_name}"
-        else:
-            workspace_pattern = f"{num}.*{project_name}|{project_name}"
+        workspace_pattern = f"{num}.*{esc_proj}|{esc_proj}"
     else:
-        if re.search(r"\bAi\b", dirname, re.IGNORECASE):
-            workspace_pattern = f"Ai.{project_name}|{project_name}"
-        else:
-            workspace_pattern = project_name
+        workspace_pattern = esc_proj
 
     return project_name, workspace_pattern
 

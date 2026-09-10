@@ -61,42 +61,24 @@ def determine_project_tag(
                 except re.error:
                     pass
 
-    # 2. Built-in heuristic regex rules
-    combined = f"{ws_str} {fn_str}"
+    # 2. Dynamic extraction from filename convention: agy_Session_<TAG>_...
+    m_fn = re.search(r'agy_Session_([A-Za-z0-9_\-]+?)_\d{4}-\d{2}-\d{2}', fn_str)
+    if m_fn:
+        tag_candidate = m_fn.group(1)
+        tag_candidate = re.sub(r'^[0-9]+[\.\-_ ]*', '', tag_candidate).strip()
+        if tag_candidate and tag_candidate.lower() not in ("session", "work", "home", "root"):
+            return tag_candidate
 
-    if re.search(r"(?:11[\._\s]*)?Ai_REVIT|REVIT|fam-gen|dwg2rvt", combined, re.IGNORECASE):
-        return "REVIT"
-    if re.search(r"(?:9[\._\s]*)?IBKR|ibkr-manager", combined, re.IGNORECASE):
-        return "IBKR"
-    if re.search(r"(?:14[\._\s]*)?Ai_STRUCTURES|STRUCTURES_ANALYSIS", combined, re.IGNORECASE):
-        return "STRUCTURES"
-    if re.search(r"TOKO_TERATAI|TERATAI", combined, re.IGNORECASE):
-        return "TOKO_TERATAI"
-    if re.search(r"\.agents\b|agents-omarchy", combined, re.IGNORECASE):
-        return "agents"
-    if re.search(r"(?:^|[/\\_\-\s])Work(?:[/\\_\-\s]|$)", combined, re.IGNORECASE):
-        return "Work"
-
-    # 3. Try to extract from workspace directory name if meaningful
+    # 3. Dynamic extraction from workspace directory name
     if ws_str and ws_str not in ("/", "\\", ".", "~"):
         try:
             p_name = Path(ws_str).name
-            if p_name and p_name.lower() not in ("home", "users", "documents", "desktop"):
+            if p_name and p_name.lower() not in ("home", "users", "documents", "desktop", "work", "root"):
                 clean_name = re.sub(r'^[0-9]+[\.\-_ ]*', '', p_name).strip()
                 if clean_name:
                     return clean_name
         except Exception:
             pass
-
-    # 4. Try to extract from filename convention: agy_Session_<TAG>_...
-    m_fn = re.search(r'agy_Session_([A-Za-z0-9_\-]+?)_\d{4}-\d{2}-\d{2}', fn_str)
-    if m_fn:
-        tag_candidate = m_fn.group(1)
-        tag_candidate = re.sub(r'^[0-9]+[\.\-_ ]*', '', tag_candidate).strip()
-        if tag_candidate and tag_candidate.lower() not in ("session", "work"):
-            return tag_candidate
-        elif tag_candidate:
-            return tag_candidate
 
     return "global"
 

@@ -19,6 +19,22 @@ def clean_text(s):
         return ""
     return str(s).strip(" \"'\\`")
 
+def sanitize_value(val):
+    if isinstance(val, str):
+        res = val
+        res = re.sub(r'(?i)\b(bearer\s+)[a-zA-Z0-9_\-\.]{10,}', r'\1[REDACTED]', res)
+        res = re.sub(r'(?i)\b((?:api[_-]?key|access_token|secret_key|token|password|passwd)[=\s:]+)(["\']?)[a-zA-Z0-9_\-\.]{6,}\2', r'\1\2[REDACTED]\2', res)
+        res = re.sub(r'\b(gh[pousr]_[A-Za-z0-9_]{16,})\b', '[REDACTED_GITHUB_TOKEN]', res)
+        res = re.sub(r'\b(sk-[a-zA-Z0-9_-]{16,})\b', '[REDACTED_API_KEY]', res)
+        res = re.sub(r'\b(AIza[0-9A-Za-z-_]{35})\b', '[REDACTED_GOOGLE_API_KEY]', res)
+        res = re.sub(r'-----BEGIN [A-Z\s]+ PRIVATE KEY-----[\s\S]*?-----END [A-Z\s]+ PRIVATE KEY-----', '[REDACTED_PRIVATE_KEY]', res)
+        return res
+    elif isinstance(val, dict):
+        return {k: sanitize_value(v) for k, v in val.items()}
+    elif isinstance(val, list):
+        return [sanitize_value(v) for v in val]
+    return val
+
 def main():
     try:
         raw_input = sys.stdin.read()
@@ -166,14 +182,14 @@ def main():
                 "role": detected_role,
                 "workspace": workspace,
                 "term_reason": reason,
-                "prompts": unique_list(prompts),
+                "prompts": [sanitize_value(p) for p in unique_list(prompts)],
                 "context": unique_list(context_loaded),
-                "tools": tools_called,
+                "tools": sanitize_value(tools_called),
                 "metrics": {
                     "total_tools": len(tools_called),
                     "tool_distribution": tool_distribution
                 },
-                "final_response": final_response
+                "final_response": sanitize_value(final_response)
             }
 
             with open(target_log, "a", encoding="utf-8") as out_f:

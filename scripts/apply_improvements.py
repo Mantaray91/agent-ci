@@ -42,7 +42,7 @@ def route_to_target(finding_or_scope: str | None, registry: dict) -> list[str]:
     """Route a scope or finding/error pattern to target skill or rule file paths.
 
     Args:
-        finding_or_scope: Scope name (e.g. 'REVIT', 'IBKR', 'global'), workspace string,
+        finding_or_scope: Scope name (e.g. 'web-backend', 'data-pipeline', 'global'), workspace string,
                           or error/finding pattern.
         registry: Project-skill mapping registry dictionary containing 'mappings'.
 
@@ -1053,10 +1053,10 @@ def evolve_rule(
             f"halt immediately, investigate root cause, and ask user after 2 consecutive identical attempts."
         )
     elif "correction" in target_lower or old_rule.get("section") == "SCOPE_ALIGNMENT":
-        scope = old_rule.get("scope") or "REVIT"
+        scope = old_rule.get("scope") or "global"
         section = "SCOPE_ALIGNMENT"
         new_rule_text = (
-            f"- **SCOPE ALIGNMENT & DOMAIN PRE-VERIFICATION ({scope})**: For domain operations (e.g. {scope}/CAD/API modifications), "
+            f"- **SCOPE ALIGNMENT & DOMAIN PRE-VERIFICATION ({scope})**: For domain operations (e.g. {scope}/domain/API modifications), "
             f"always verify target element type, schema constraints, and document state prior to modification; "
             f"halt and clarify scope with user when requirements are ambiguous or upon receiving feedback."
         )

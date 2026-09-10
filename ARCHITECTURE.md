@@ -152,8 +152,8 @@ Maps workspace folder regex patterns to project scope names and associated skill
         "type": "object",
         "required": ["project_name", "workspace_pattern", "skill_paths", "source"],
         "properties": {
-          "project_name": { "type": "string", "example": "REVIT" },
-          "workspace_pattern": { "type": "string", "example": "Ai_REVIT|fam-gen" },
+          "project_name": { "type": "string", "example": "web-backend" },
+          "workspace_pattern": { "type": "string", "example": "web-backend|api-service" },
           "skill_paths": {
             "type": "array",
             "items": { "type": "string" }
@@ -335,7 +335,7 @@ Outputs graph-compatible telemetry containing raw sessions, aggregate statistics
     "warning_sessions": 11,
     "failed_sessions": 3,
     "sources": { "antigravity": 98, "claude": 44 },
-    "project_tags": { "REVIT": 64, "IBKR": 40, "global": 38 },
+    "project_tags": { "web-backend": 64, "data-service": 40, "global": 38 },
     "top_tools": { "run_command": 512, "view_file": 320, "replace_file_content": 140 },
     "error_types": { "ToolExecutionError": 12, "ToolTimeout": 2 },
     "loops_detected": 4
@@ -344,8 +344,8 @@ Outputs graph-compatible telemetry containing raw sessions, aggregate statistics
     {
       "id": "session_2026-09-10_01",
       "timestamp": "2026-09-10T08:30:00Z",
-      "workspace": "/home/user/Work/Ai_REVIT",
-      "project_tag": "REVIT",
+      "workspace": "/home/user/projects/web-backend",
+      "project_tag": "web-backend",
       "health": "HEALTHY",
       "tools_used": { "run_command": 8, "view_file": 4 },
       "errors": [],

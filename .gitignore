@@ -24,8 +24,10 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual environments
+# Virtual environments & local configs
 .env
+.env.*
+!.env.example
 .venv
 env/
 venv/
@@ -33,17 +35,58 @@ ENV/
 env.bak/
 venv.bak/
 
-# Operating System files
+# Secrets, private keys & credentials
+*.pem
+*.key
+*.pfx
+*.p12
+*.crt
+id_rsa*
+id_ed25519*
+*.secret
+secrets.*
+credentials.json
+token.json
+auth.json
+service-account*.json
+.npmrc
+.pypirc
+
+# Operating System & IDE files
 .DS_Store
 Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.history/
 
-# Agent CI logs & state artifacts
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Agent CI logs & session telemetry
 *.log
+*.jsonl
 .audited
+logs/
 agent-ci-reports/
+agent_ci_*.json
 /tmp/agent_ci_*.json
+
+# Agent CI local runtime state artifacts (when run in workspace root)
+project-skill-map.json
+.skill-lock.json
+score_history.json
+rule_ledger.json
+upstream_status.json
+applied_changes.json
+verification_result.json
+OBSIDIAN_DASHBOARD.md
 
 # Superpowers & planning artifacts
 .superpowers/
 docs/superpowers/
-

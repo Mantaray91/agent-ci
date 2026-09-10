@@ -69,7 +69,7 @@ flowchart TD
   - `system`: Identifies system-installed binaries and system-managed tools.
   - `local`: Flags locally authored, standalone project skills.
 - **Dynamic Registry Generation**: Generates or updates `~/.agents/project-skill-map.json` while strictly preserving existing user-defined manual mappings (`"source": "manual"`).
-- **Scope Pattern Matching**: Derives project scope identifiers (e.g., `REVIT`, `IBKR`, `IHSG`, `STRUCTURES`, `global`) and matching regex patterns.
+- **Scope Pattern Matching**: Derives project scope identifiers (e.g., `web-backend`, `data-pipeline`, `mobile-app`, `global`) and matching regex patterns.
 
 #### Phase 1: Log Audit (`parse_logs.py`)
 - **Telemetry Ingestion**: Scans structured JSON Lines logs (`logs/*.jsonl`) and Markdown logs (`logs/*.md`) from CLI and Chat-Agentic sessions.
