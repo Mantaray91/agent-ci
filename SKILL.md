@@ -3,7 +3,7 @@ name: agent-ci
 description: "Autonomous 7-phase self-improving agent pipeline: auto-discovers skills across workspaces, audits logs with adaptive batching, computes composite health scores with rule efficacy lifecycle and learning rate metric, checks upstream skills (including NPX and symlinks), applies hardening patches with pruning and evolution, verifies via automated evals with auto-revert, and generates comprehensive CI reports with Obsidian dashboard mirroring."
 ---
 
-# Agent Continuous Improvement (`agent-ci`) v2.1
+# Agent Continuous Improvement (`agent-ci`) v2.1.1
 
 An autonomous, closed-loop self-improving pipeline for AI coding agents. `agent-ci` ingests multi-source execution logs, auto-discovers skills across active workspaces, evaluates agent performance across project scopes, tracks upstream skill freshness (including symlinked and NPX skills), synthesizes targeted hardening patches with full rule efficacy lifecycle management (auto-pruning ineffective rules and evolving alternatives), verifies changes against automated evaluation suites with automatic regression rollback, and publishes visual health dashboards mirrored to Obsidian.
 
@@ -97,6 +97,7 @@ flowchart TD
 #### Phase 3: Upstream Check (`check_upstream.py`)
 - **Lockfile & Registry Comparison**: Reads installed skills from `~/.agents/.skill-lock.json` and the auto-discovered registry.
 - **Symlink & NPX Support**: Resolves symlink targets to their Git repository root, utilizing per-repository remote hash caching to prevent redundant network round-trips. Categorizes system and NPX tools appropriately as `SYSTEM_MANAGED`.
+- **Git Option & Protocol Injection Defense**: Validates repository URLs via `is_valid_git_url()` against option injection flags (`--upload-pack`, `-u`), blocks dangerous schemes (`ext::`, `file://`), and enforces `--` argument separators across git commands.
 - **Status Categories**:
   - `CURRENT`: Installed skill hash matches remote upstream.
   - `UPDATE_AVAILABLE`: New commits exist upstream.
@@ -107,6 +108,8 @@ flowchart TD
 
 #### Phase 4: Apply Improvements (`apply_improvements.py`)
 - **Autonomous Upstream Sync**: Fetches and fast-forwards skills flagged with `UPDATE_AVAILABLE`.
+- **Prompt Injection & Path Traversal Guards**: Sanitizes error/scope tokens with `_sanitize_token()` (stripping newlines, backticks, and HTML tags) before synthesizing rules; validates target paths against `allowed_roots` to prevent directory traversal.
+- **Selective File Staging**: Stages only explicitly modified rule files and ledger updates (`files_to_stage`) instead of blind staging (`git add -A`), keeping untracked secrets and dirty workspace state out of git history.
 - **Telemetry-Driven Hardening**: Generates targeted rule enhancements:
   - `LOOP_GUARDS`: Injects thrashing prevention rules for overused tools.
   - `PRE_FLIGHT_CHECKS`: Injects verification requirements for tools prone to crashes or timeouts.
@@ -122,10 +125,12 @@ flowchart TD
 - **Safe Dry-Run**: Supports `--dry-run` to preview all actions without modifying files or git state.
 
 #### Phase 5: Verification & Auto-Revert (`verify_improvements.py`)
-- **Automated Skill Evals**: Detects modified skills and executes their evaluation suites (e.g. `evals/evals.json`, Python `test_*.py`).
+- **Safe Static AST Verification**: Defaults to static AST syntax inspection (`ast.parse`) for Python test files to eliminate arbitrary code execution (RCE) from untrusted skill test suites. Supports `--allow-code-eval` for explicit dynamic test execution.
+- **Automated Skill Evals & Path Traversal Guard**: Executes evaluation suites (`evals/evals.json`) with strict `is_relative_to()` directory boundary enforcement on all assertion file targets.
 - **Rule Lifecycle Check**: Validates active rules and calculates learning rate metrics.
-- **Regression Guard**: Compares post-patch pass rates against baselines. If regression exceeds the allowable threshold (`--eval-threshold 0.05` / 5% drop):
-  - Automatically executes `git revert --no-edit HEAD`.
+- **Regression Guard & Manual Commit Protection**: Compares post-patch pass rates against baselines. If regression exceeds the allowable threshold (`--eval-threshold 0.05` / 5% drop):
+  - Validates HEAD commit message to ensure it is an automated CI commit before executing rollback, refusing to revert manual user commits.
+  - Automatically executes `git revert --no-edit HEAD` when verified.
   - Tags the rollback event (`ci/YYYY-MM-DD-reverted`).
   - Logs critical caution alert in the verification output.
 - **Dry-Run Safe**: Runs evaluation previews without executing git revert when `--dry-run` is active.
@@ -368,3 +373,11 @@ git revert --no-edit ci/2026-09-09
 # 4. Alternatively, reset hard to the commit immediately prior to the CI tag (if unpushed)
 git reset --hard ci/2026-09-09~1
 ```
+
+### 5. Runtime Security & Injection Defenses (v2.1.1)
+`agent-ci` incorporates active security defenses against untrusted repositories and prompt poisoning:
+- **Git Option & Protocol Injection Mitigation**: Rejects flags (`--upload-pack`, `-u`) and protocols like `ext::` or `file://`; injects `--` command separators across all git subprocess commands.
+- **Prompt Injection / Rule Poisoning Sanitization**: Sanitizes tokens via `_sanitize_token()` (stripping newlines, markdown fences, HTML/XML tags) before creating rule definitions.
+- **Safe Static AST Verification**: Defaults to static AST validation (`ast.parse`) for Python tests, completely eliminating code execution risks from untrusted eval suites unless `--allow-code-eval` is explicitly passed.
+- **Path Traversal Guard**: Enforces `allowed_roots` validation in `apply_patch_to_file()` and checks all eval targets with `is_relative_to()`.
+- **Manual Commit Protection**: Verifies commit message format before `auto_revert` triggers, refusing to rollback commits made manually by human developers.
