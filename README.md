@@ -4,7 +4,8 @@
 
 # AGENT-CI: Autonomous Continuous Improvement Pipeline for AI Coding Agents
 
-[![Version](https://img.shields.io/badge/version-v2.1-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-v2.1.1-blue.svg)](CHANGELOG.md)
+[![CI](https://github.com/Mantaray91/agent-ci/actions/workflows/ci.yml/badge.svg)](https://github.com/Mantaray91/agent-ci/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Target](https://img.shields.io/badge/target-Antigravity%20%7C%20Claude%20%7C%20Gemini%20%7C%20Agents-purple.svg)](#)
